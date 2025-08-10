@@ -41,6 +41,7 @@ export default function SuggestionDetailsPage() {
       <h1 className="text-3xl font-bold text-[#003087] mb-6">Suggestion Details</h1>
 
       <div className="bg-gray-50 border rounded-xl p-6 shadow space-y-3">
+        <p><span className="font-semibold">Suggestion code:</span> {suggestion.reference_code}</p>
         <p><span className="font-semibold">Title:</span> {suggestion.suggestion_title}</p>
         <p><span className="font-semibold">Type:</span> {suggestion.suggestion_type}</p>
         <p><span className="font-semibold">Department:</span> {suggestion.suggestion_dep}</p>

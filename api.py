@@ -615,7 +615,7 @@ def get_complaint_by_id():
     return jsonify({
         "status": "success",
         "complaint_id": str(complaint.complaint_id),
-        'reference_code': c.reference_code,
+        'reference_code': complaint.reference_code,
         "complaint_title": complaint.complaint_title,
         "complaint_message": complaint.complaint_message,
         "complaint_type": complaint.complaint_type.name if complaint.complaint_type else None,
@@ -673,6 +673,7 @@ def get_suggestion_by_id():
 
     return jsonify({
         'suggestion_id': str(suggestion.suggestion_id),
+        'reference_code': suggestion.reference_code,
         'suggestion_title': suggestion.suggestion_title,
         'suggestion_message': suggestion.suggestion_message,
         'suggestion_type': str(suggestion.suggestion_type.name),

@@ -53,6 +53,7 @@ export default function StudentComplaintDetails() {
       <h1 className="text-3xl font-bold text-[#003087] mb-6">Complaint Details</h1>
 
       <div className="bg-gray-50 border rounded-xl p-6 shadow space-y-3">
+        <p><span className="font-semibold">Complaint code:</span> {complaint.reference_code}</p>
         <p><span className="font-semibold">Title:</span> {complaint.complaint_title}</p>
         <p><span className="font-semibold">Type:</span> {typeMap[complaint.complaint_type] || complaint.complaint_type}</p>
         <p><span className="font-semibold">Department:</span> {complaint.complaint_dep}</p>
