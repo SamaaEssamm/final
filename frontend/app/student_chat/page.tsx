@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 
 type ChatMessage = {
@@ -21,6 +21,14 @@ export default function StudentChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // scroll to bottom when messages update
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   useEffect(() => {
     const email = localStorage.getItem('student_email');
@@ -150,30 +158,35 @@ export default function StudentChatPage() {
     </div>
 
     {/* Messages */}
-<div className="flex-1 p-6 overflow-y-auto bg-white space-y-4">
-  <AnimatePresence initial={false}>
-    {messages.map((msg, i) => (
-      <motion.div
-        key={i}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.3 }}
-        className={`max-w-xl break-words ${
-          msg.sender === 'user' ? 'ml-auto text-right' : 'text-left'
-        }`}
-      >
-        <div
-          className={`inline-block px-4 py-2 rounded-2xl shadow-sm ${
-            msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'
-          }`}
-        >
-          {msg.text}
-        </div>
-      </motion.div>
-    ))}
-  </AnimatePresence>
-</div>
+    <div className="flex-1 p-6 overflow-y-auto bg-white space-y-4">
+      <AnimatePresence initial={false}>
+        {messages.map((msg, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className={`max-w-xl break-words ${
+              msg.sender === 'user' ? 'ml-auto text-right' : 'text-left'
+            }`}
+          >
+            <div
+              className={`inline-block px-4 py-2 rounded-2xl shadow-sm ${
+                msg.sender === 'user'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 text-gray-800'
+              }`}
+            >
+              {msg.text}
+            </div>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+      {/* 👇 this div acts as the scroll target */}
+      <div ref={messagesEndRef} />
+    </div>
+
 
     {/* Input */}
     <div className="p-4 border-t bg-white flex gap-2 shadow-inner">

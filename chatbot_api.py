@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from langchain.chains import RetrievalQA
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from langchain.schema import Document
 import os
@@ -10,7 +10,7 @@ import numpy as np
 
 
 # ========== SETUP ==========
-os.environ["GROQ_API_KEY"] = "secret key"
+os.environ["GROQ_API_KEY"] = "secret-key"
 
 embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
