@@ -1,6 +1,9 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
+
 export default function AdminDashboard() {
   const [adminName, setAdminName] = useState('Admin');
   const [isLoading, setIsLoading] = useState(true);
@@ -61,12 +64,18 @@ useEffect(() => {
 }, []);
 
   useEffect(() => {
+    const role = localStorage.getItem("role");
+  if (role !== "admin") {
+    router.push("/no-access");
+    return;
+  }
     const email = localStorage.getItem('admin_email');
     if (!email) { 
       if (!redirected.current) {
         redirected.current = true;
         router.replace('/login'); // use replace instead of push
       }
+ 
     } else {
       fetch(`http://localhost:5000/api/get_admin_name/${encodeURIComponent(email)}`)
         .then(res => res.json())
@@ -107,6 +116,10 @@ useEffect(() => {
       {/* Navigation Bar */}
 <nav className="bg-[#003087] text-white py-3 shadow-md">
   <ul className="flex justify-center gap-6 font-semibold text-sm md:text-base">
+
+
+
+
     <li>
       <button
         onClick={() => router.push('/admin_manage_complaints')}
@@ -226,7 +239,20 @@ useEffect(() => {
           This is your admin dashboard to manage complaints and suggestions
         </p>
       </section>
+
+{/* Footer */}
+<footer className="bg-[#003087] text-white py-4 mt-auto">
+  <div className="container mx-auto text-center text-sm">
+    <p>© {new Date().getFullYear()} Faculty of Computer & Information - Assiut University</p>
+    <p className="mt-1">
+      Contact: <a href="mailto:info@aun.edu.eg" className="underline hover:text-gray-300">fci_assiut@fci.au.edu.eg</a>
+    </p>
+  </div>
+</footer>
+
       
     </div>
   );
 }
+
+

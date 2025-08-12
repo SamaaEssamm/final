@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { FaArrowLeft } from "react-icons/fa";
 type Suggestion = {
     suggestion_id: string;
     reference_code: number;
@@ -19,6 +19,17 @@ export default function SuggestionsPage() {
     const router = useRouter();
 
     useEffect(() => {
+        const email = localStorage.getItem('student_email');
+  if (!email) {
+    router.push('/login');
+    return;
+  }
+
+  const role = localStorage.getItem("role");
+  if (role !== "student") {
+    router.push("/no-access");
+    return;
+  }
         const fetchData = async () => {
             try {
                 const email = localStorage.getItem("student_email");
@@ -61,6 +72,22 @@ export default function SuggestionsPage() {
                 >
                     + Add Suggestion
                 </button>
+                <button
+                        onClick={() => router.push('/student_dashboard')}
+                        title="Back"
+                        style={{
+                          position: "fixed",
+                          bottom: "20px",
+                          left: "40px",
+                          backgroundColor: "transparent",
+                          border: "none",
+                          cursor: "pointer",
+                          color: "blue",
+                          fontSize: "60px",
+                        }}
+                      >
+                        <FaArrowLeft />
+                      </button>
             </div>
 
             {loading ? (
@@ -70,15 +97,15 @@ export default function SuggestionsPage() {
             ) : (
                 <div className="overflow-x-auto rounded-xl shadow border border-gray-200">
                     <table className="min-w-full bg-white text-sm">
-                   <thead className="bg-gray-100 text-left">
-                    <tr>
-                        <th className="px-4 py-3 font-medium text-gray-700">suggestion code </th> {/* العمود الجديد */}
-                        <th className="px-4 py-3 font-medium text-gray-700">Title</th>
-                        <th className="px-4 py-3 font-medium text-gray-700">Type</th>
-                        <th className="px-4 py-3 font-medium text-gray-700">Department</th>
-                        <th className="px-4 py-3 font-medium text-gray-700">Date</th>
-                    </tr>
-                </thead>
+                     <thead className="bg-gray-100 text-left">
+                        <tr>
+                            <th className="px-4 py-3 font-medium text-gray-700">suggestion code </th> {/* العمود الجديد */}
+                            <th className="px-4 py-3 font-medium text-gray-700">Title</th>
+                            <th className="px-4 py-3 font-medium text-gray-700">Type</th>
+                            <th className="px-4 py-3 font-medium text-gray-700">Department</th>
+                            <th className="px-4 py-3 font-medium text-gray-700">Date</th>
+                        </tr>
+                    </thead>
 <tbody>
     {suggestions.map((s) => (
         <tr

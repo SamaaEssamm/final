@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -91,6 +91,25 @@ export default function LoginPage() {
         >
           Login
         </button>
+
+
+        <button
+            onClick={() => router.back()}
+    title="Back"
+    style={{
+      position: "fixed",
+      bottom: "20px",
+      left: "40px",
+      backgroundColor: "transparent",
+      border: "none",
+      cursor: "pointer",
+      color: "blue",
+      fontSize: "60px",
+    }}
+  >
+    <FaArrowLeft />
+  </button>
+
       </form>
     </div>
   );

@@ -1,7 +1,7 @@
 'use client';
-import { useRef } from "react";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
 export default function Dashboard() {
   const [studentName, setStudentName] = useState('Student');
   const [isLoading, setIsLoading] = useState(true);
@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+
   const handleNotificationClick = (notification: Notification) => {
   if (!notification.is_read) {
     // اعمل له تحديث في قاعدة البيانات إنه مقروء
@@ -45,10 +46,16 @@ type Notification = {
 
 //noti useeffect 
 useEffect(() => {
+
   const email = localStorage.getItem('student_email');
   if (!email) {
     router.push('/login');
   } else {
+     const role = localStorage.getItem("role");
+  if (role !== "student") {
+    router.push("/no-access");
+    return; 
+  }
     // 1. Fetch student name
     fetch(`http://localhost:5000/api/student/${encodeURIComponent(email)}`)
       .then(res => res.json())
@@ -89,6 +96,9 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen text-[#003087] flex flex-col">
+
+
+
       {/* Header */}
       <header className="w-full flex justify-between items-center px-10 py-4 bg-transparent shadow-none">
         <div className="flex flex-col items-center">
@@ -201,10 +211,17 @@ useEffect(() => {
   </ul>
 </nav>
 
-     {/* Welcome Section */}
+
+      {/* Welcome Section */}
       <section
   className="flex-grow flex flex-col items-center justify-center text-center px-6"
-  style={{ backgroundImage: "url('/home1-ar-lzneos.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
+  style={{
+    backgroundColor: 'white',
+    backgroundImage: "url('/home1-ar-lzneos.jpg')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  }}
+
 >
   <h1 className="text-5xl font-extrabold text-white drop-shadow-lg mb-4">
     Welcome, {studentName} 🎓
@@ -213,6 +230,7 @@ useEffect(() => {
     This is your university platform for complaints and suggestions
   </p>
 </section>
+
 
       {/* Floating Chatbot Button */}
       <button
@@ -236,6 +254,18 @@ useEffect(() => {
           </div>
         </div>
       )}
+  
+      
+
+{/* Footer */}
+<footer className="bg-[#003087] text-white py-4 mt-auto">
+  <div className="container mx-auto text-center text-sm">
+    <p>© {new Date().getFullYear()} Faculty of Computer & Information - Assiut University</p>
+    <p className="mt-1">
+      Contact: <a href="mailto:info@aun.edu.eg" className="underline hover:text-gray-300">fci_assiut@fci.au.edu.eg</a>
+    </p>
+  </div>
+</footer>
 
     </div>
   );

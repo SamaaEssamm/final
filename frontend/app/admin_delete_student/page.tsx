@@ -1,17 +1,26 @@
 'use client';
 
 import { useState } from 'react';
-
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
+import {  useRouter } from 'next/navigation';
 export default function DeleteStudentPage() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
+
 
   const handleDelete = async () => {
     if (!email) {
       setError('Please enter a student email');
       return;
     }
+ 
+  const role = localStorage.getItem("role");
+  if (role !== "admin") {
+    router.push("/no-access");
+    return;
+  }
 
     try {
       const res = await fetch('http://127.0.0.1:5000/api/admin_delete_student', {
@@ -55,12 +64,31 @@ export default function DeleteStudentPage() {
           />
         </div>
 
+         <button
+            onClick={() => router.push('/admin_manage_students')}
+    title="Back"
+    style={{
+      position: "fixed",
+      bottom: "20px",
+      left: "40px",
+      backgroundColor: "transparent",
+      border: "none",
+      cursor: "pointer",
+      color: "blue",
+      fontSize: "60px",
+    }}
+  >
+    <FaArrowLeft />
+  </button>
+
+
         <button
           onClick={handleDelete}
           className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition w-full"
         >
           Delete Student
         </button>
+
 
         {message && <p className="text-green-600 font-medium">{message}</p>}
         {error && <p className="text-red-600 font-medium">{error}</p>}

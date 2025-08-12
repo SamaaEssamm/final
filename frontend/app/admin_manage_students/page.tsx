@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
+
 type Student = {
   users_id: string;
   users_name: string;
@@ -15,6 +17,12 @@ export default function ManageStudentsPage() {
   const router = useRouter();
 
   useEffect(() => {
+
+  const role = localStorage.getItem("role");
+  if (role !== "admin") {
+    router.push("/no-access");
+    return;
+  }
     const fetchStudents = async () => {
       try {
         const res = await fetch('http://127.0.0.1:5000/api/admin/get_all_students');
@@ -48,6 +56,25 @@ const handleUpdate = () => router.push('/admin_update_student');
       <div className="flex flex-wrap gap-3 justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-[#003087]">Manage Students</h1>
         <div className="flex gap-3">
+
+
+          <button
+            onClick={() => router.push('/admin_dashboard')}
+    title="Back"
+    style={{
+      position: "fixed",
+      bottom: "20px",
+      left: "40px",
+      backgroundColor: "transparent",
+      border: "none",
+      cursor: "pointer",
+      color: "blue",
+      fontSize: "60px",
+    }}
+  >
+    <FaArrowLeft />
+  </button>
+
           <button
             onClick={handleAdd}
             className="bg-green-600 text-white px-4 py-2 rounded-2xl text-sm hover:bg-green-700 transition"

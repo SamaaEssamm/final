@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
+
 
 export default function AdminAddStudentPage() {
   const router = useRouter();
@@ -16,6 +18,11 @@ export default function AdminAddStudentPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setMessage('');
+    const role = localStorage.getItem("role");
+  if (role !== "admin") {
+    router.push("/no-access");
+    return;
+  }
 
     try {
       const res = await fetch('http://127.0.0.1:5000/api/admin/add_student', {
@@ -103,6 +110,25 @@ export default function AdminAddStudentPage() {
         >
           {isSubmitting ? 'Adding...' : 'Add Student'}
         </button>
+
+
+        <button
+            onClick={() => router.push('/admin_manage_students')}
+            title="Back"
+            style={{
+              position: "fixed",
+              bottom: "20px",
+              left: "40px",
+              backgroundColor: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: "blue",
+              fontSize: "60px",
+            }}
+          >
+            <FaArrowLeft />
+          </button>
+
 
         {message && (
           <p className="mt-4 text-sm text-center text-gray-700">{message}</p>

@@ -2,15 +2,30 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
+
 
 export default function StudentComplaintDetails() {
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const router = useRouter();
 
   const [complaint, setComplaint] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
+     const email = localStorage.getItem('student_email');
+  if (!email) {
+    router.push('/login');
+    return;
+  }
+
+  const role = localStorage.getItem("role");
+  if (role !== "student") {
+    router.push("/no-access");
+    return;
+  }
     if (!id) return;
 
     const fetchComplaint = async () => {
@@ -52,11 +67,29 @@ export default function StudentComplaintDetails() {
     <div className="min-h-screen bg-white py-10 px-6 md:px-12 lg:px-24">
       <h1 className="text-3xl font-bold text-[#003087] mb-6">Complaint Details</h1>
 
+
+      <button
+                  onClick={() => router.push('/student_complaint')}
+          title="Back"
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            left: "40px",
+            backgroundColor: "transparent",
+            border: "none",
+            cursor: "pointer",
+            color: "blue",
+            fontSize: "60px",
+          }}
+        >
+          <FaArrowLeft />
+        </button>
+
       <div className="bg-gray-50 border rounded-xl p-6 shadow space-y-3">
         <p><span className="font-semibold">Complaint code:</span> {complaint.reference_code}</p>
         <p><span className="font-semibold">Title:</span> {complaint.complaint_title}</p>
-        <p><span className="font-semibold">Type:</span> {typeMap[complaint.complaint_type] || complaint.complaint_type}</p>
-        <p><span className="font-semibold">Department:</span> {complaint.complaint_dep}</p>
+        <p><span className="font-semibold">Department:</span> {typeMap[complaint.complaint_type] || complaint.complaint_type}</p>
+        <p><span className="font-semibold">Type:</span> {complaint.complaint_dep}</p>
         <p>
           <span className="font-semibold">Date:</span>{' '}
           {complaint.complaint_created_at
@@ -107,4 +140,5 @@ export default function StudentComplaintDetails() {
     
   
   );
+
 }

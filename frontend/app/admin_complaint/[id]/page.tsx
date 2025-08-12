@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
 export default function ComplaintDetailsPage() {
   const router = useRouter();
   const params = useParams();
@@ -17,6 +17,12 @@ export default function ComplaintDetailsPage() {
 
   useEffect(() => {
     if (!id) return;
+  
+  const role = localStorage.getItem("role");
+  if (role !== "admin") {
+    router.push("/no-access");
+    return;
+  }
 
     const fetchComplaint = async () => {
       try {
@@ -72,12 +78,13 @@ export default function ComplaintDetailsPage() {
       setUpdating(false);
     }
   };
-
+  
   const handleRespond = () => {
     if (id) {
       router.push(`/admin_respond?id=${id}`);
     }
   };
+  
 
   const statusMap: Record<string, string> = {
     under_checking: 'Received',
@@ -99,13 +106,16 @@ export default function ComplaintDetailsPage() {
   const isResponded = complaint.complaint_status === 'done';
 
   return (
+
     <div className="min-h-screen bg-white py-10 px-6 md:px-12 lg:px-24">
       <h1 className="text-3xl font-bold text-[#003087] mb-6">Complaint Details</h1>
 
       <div className="bg-gray-50 border rounded-xl p-6 shadow space-y-3">
+
         <p><span className="font-semibold">Complaint code:</span> {complaint.reference_code}</p>
         <p><span className="font-semibold">Title:</span> {complaint.complaint_title}</p>
-        <p><span className="font-semibold">Type:</span> {typeMap[complaint.complaint_type] || complaint.complaint_type}</p>
+        <p><span className="font-semibold">Department:</span> {typeMap[complaint.complaint_type] || complaint.complaint_type}</p>
+
         <p>
           <span className="font-semibold">Date:</span>{' '}
           {complaint.complaint_created_at
@@ -117,6 +127,8 @@ export default function ComplaintDetailsPage() {
             : 'Unknown'}
         </p>
         <p><span className="font-semibold">Student:</span> {complaint.student_email}</p>
+
+
         <p><span className="font-semibold">Status:</span> {statusMap[complaint.complaint_status] || complaint.complaint_status}</p>
 
         <div className="mt-4">
@@ -152,6 +164,27 @@ export default function ComplaintDetailsPage() {
             <option value="in_progress">In Progress</option>
           </select>
 
+
+          
+
+        <button
+    onClick={() =>  router.push('/admin_manage_complaints')}
+    title="Back"
+    style={{
+      position: "fixed",
+      bottom: "20px",
+      left: "40px",
+      backgroundColor: "transparent",
+      border: "none",
+      cursor: "pointer",
+      color: "blue",
+      fontSize: "60px",
+    }}
+  >
+    <FaArrowLeft />
+  </button>
+
+
           <button
             onClick={handleUpdateStatus}
             disabled={updating || status === 'done' || !status}
@@ -167,6 +200,7 @@ export default function ComplaintDetailsPage() {
             >
               Respond
             </button>
+
           )}
 
           {status === 'done' && (

@@ -1,9 +1,10 @@
 'use client';
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
 
 export default function NewComplaintPage() {
+  
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
@@ -12,44 +13,62 @@ export default function NewComplaintPage() {
     type: 'academic',
     dep: 'public',
   });
+    useEffect(() => {
+    const email = localStorage.getItem('student_email');
+  if (!email) {
+    router.push('/login');
+    return;
+  }
+
+  const role = localStorage.getItem("role");
+  if (role !== "student") {
+    router.push("/no-access");
+    return;
+  }
+  }, [router]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
- 
-
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   const student_email = localStorage.getItem('student_email');
-  if (!student_email) {
+    if (!student_email) {
     alert("User email not found. Please log in again.");
     return;
   }
 
-  const form = new FormData();
-  form.append("student_email", student_email);
-  form.append("complaint_title", formData.title);
-  form.append("complaint_message", formData.message);
-  form.append("complaint_type", formData.type);
-  form.append("complaint_dep", formData.dep);
-  if (file) form.append("file", file); // 👈 ضيفي الملف لو موجود
-
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/student/addcomplaint', {
-      method: 'POST',
-      body: form, // لا تستخدمي Content-Type مع FormData
-    });
+            //const file = fileInputRef.current?.files?.[0] || null;
+            const data = new FormData();
+            data.append('student_email', student_email);
+            data.append('complaint_title', formData.title);
+            data.append('complaint_message', formData.message);
+            data.append('complaint_type', formData.type);
+            data.append('complaint_dep', formData.dep);
 
-    if (res.ok) {
-      router.push('/student_complaint');
-    } else {
-      const errorText = await res.text();
-      alert('Error: ' + errorText);
-    }
-  } catch (error) {
+            if (file) {
+                data.append('file', file); // ده الفايل اللي هيترفع
+            }
+
+            const res = await fetch('http://127.0.0.1:5000/api/student/addcomplaint', {
+                method: 'POST',
+                body: data,
+            });
+
+  if (res.ok) {
+    router.push('/student_complaint');
+  } else {
+    const errorText = await res.text();
+    alert('Error: ' + errorText);
+  }
+}
+   catch (error) {
+
     console.error("Error submitting complaint:", error);
     alert("Something went wrong. Please try again later.");
   }
@@ -60,6 +79,24 @@ const handleSubmit = async (e: React.FormEvent) => {
   return (
     <main className="bg-white min-h-screen py-10 px-6 md:px-12 lg:px-24">
       <h1 className="text-3xl font-bold text-[#003087] mb-8">Submit a Complaint</h1>
+
+      <button
+        onClick={() => router.push('/student_complaint')}
+        title="Back"
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          left: "40px",
+          backgroundColor: "transparent",
+          border: "none",
+          cursor: "pointer",
+          color: "blue",
+          fontSize: "60px",
+        }}
+      >
+        <FaArrowLeft />
+      </button>
+
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
         <div>
@@ -98,7 +135,9 @@ const handleSubmit = async (e: React.FormEvent) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+
             <select
               name="type"
               value={formData.type}
@@ -113,7 +152,10 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+
             <select
               name="dep"
               value={formData.dep}
@@ -123,6 +165,19 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="public">Public</option>
               <option value="private">Private</option>
             </select>
+
+
+            {formData.dep === 'public' && (
+  <p className="text-sm text-green-600 mt-1">
+    Note: Since the complaint is "Public", your name will NOT be displayed to protect your privacy.
+  </p>
+)}
+            {formData.dep === 'private' && (
+              <p className="text-sm text-red-600 mt-1">
+                Note: Since the complaint is "Private", your name will be displayed with the complaint.
+              </p>
+            )}
+
           </div>
         </div>
 
