@@ -10,7 +10,7 @@ import numpy as np
 
 
 # ========== SETUP ==========
-os.environ["GROQ_API_KEY"] = "secret-key"
+os.environ["GROQ_API_KEY"] = ""
 
 embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 

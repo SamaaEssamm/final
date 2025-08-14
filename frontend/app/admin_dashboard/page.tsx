@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+
 export default function AdminDashboard() {
   const [adminName, setAdminName] = useState('Admin');
   const [isLoading, setIsLoading] = useState(true);
@@ -61,12 +62,18 @@ useEffect(() => {
 }, []);
 
   useEffect(() => {
+    const role = localStorage.getItem("role");
+  if (role !== "admin") {
+    router.push("/no-access");
+    return;
+  }
     const email = localStorage.getItem('admin_email');
     if (!email) { 
       if (!redirected.current) {
         redirected.current = true;
         router.replace('/login'); // use replace instead of push
       }
+ 
     } else {
       fetch(`http://localhost:5000/api/get_admin_name/${encodeURIComponent(email)}`)
         .then(res => res.json())
@@ -107,6 +114,10 @@ useEffect(() => {
       {/* Navigation Bar */}
 <nav className="bg-[#003087] text-white py-3 shadow-md">
   <ul className="flex justify-center gap-6 font-semibold text-sm md:text-base">
+
+
+
+
     <li>
       <button
         onClick={() => router.push('/admin_manage_complaints')}
@@ -226,7 +237,37 @@ useEffect(() => {
           This is your admin dashboard to manage complaints and suggestions
         </p>
       </section>
+
+{/* Footer */}
+<footer className="bg-[#003087] text-white py-4 mt-auto transition-all duration-500 hover:py-10 group">
+  <div className="container mx-auto text-center text-sm">
+    {/* Always visible */}
+    <p>© {new Date().getFullYear()} Faculty of Computer & Information - Assiut University</p>
+    
+
+    {/* Hidden until footer hover */}
+    <div className="overflow-hidden max-h-0 opacity-0 transition-all duration-500 group-hover:max-h-40 group-hover:opacity-100 mt-3">
+      <p className="mt-2">📍 Location: Assiut University, Egypt</p>
+      <p>📞 Phone: (088) 347678</p>
+      <p>🌐 Website: <a href="https://www.aun.edu.eg/fci/ar/home-2" className="underline hover:text-gray-300">www.aun.edu.eg</a></p>
+      <p className="mt-1">
+      Contact:{" "}
+      <a href="mailto:fci_assiut@fci.au.edu.eg" className="underline hover:text-gray-300">
+        fci_assiut@fci.au.edu.eg
+      </a>
+      </p>
+      <div className="mt-2 flex justify-center gap-4">
+        <a href="https://www.facebook.com/profile.php?id=100057545794964&ref=hl#" className="hover:text-gray-300">Facebook</a>
+        <a href="https://youtube.com/@facultyofcomputersandinfor1234?si=60jcJIm4spA4a8o_" className="hover:text-gray-300">YouTube</a>
+        <a href="https://x.com/fci_aun" className="hover:text-gray-300">Twitter</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
       
     </div>
   );
 }
+
+

@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
 export default function RespondPage() {
   const params = useSearchParams();
   const id = params.get('id');
@@ -23,6 +23,12 @@ export default function RespondPage() {
       setMessage('Admin email not found.');
       return;
     }
+    
+  const role = localStorage.getItem("role");
+  if (role !== "admin") {
+    router.push("/no-access");
+    return;
+  }
 
     setSubmitting(true);
     setMessage('');
@@ -75,6 +81,14 @@ export default function RespondPage() {
   return (
     <div className="min-h-screen bg-white py-10 px-6 md:px-12 lg:px-24">
       <h1 className="text-3xl font-bold text-[#003087] mb-6">Respond to Complaint</h1>
+
+<button
+  onClick={() => router.push(`/admin_complaint/${id}`)}
+  title="Back"
+  className="fixed bottom-6 left-6 rounded-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
+>
+  <FaArrowLeft size={26} />
+</button>
 
       <textarea
         value={responseText}

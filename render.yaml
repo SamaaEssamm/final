@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: complaints-app
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn api:app
+    envVars:
+      - key: FLASK_ENV
+        value: production

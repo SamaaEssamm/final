@@ -1,20 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
+import { useRouter } from 'next/navigation';
 export default function UpdateStudentPage() {
   const [oldEmail, setOldEmail] = useState('');
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
+  const router = useRouter();
+
 
   const handleUpdate = async () => {
     if (!oldEmail) {
       setMessage('Old email is required.');
       return;
     }
-
+    const role = localStorage.getItem("role");
+if (role !== "admin") return;
     try {
       const response = await fetch('http://localhost:5000/api/admin/update_student', {
         method: 'PUT',
@@ -48,6 +52,16 @@ export default function UpdateStudentPage() {
     <main className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-10">
       <div className="w-full max-w-md bg-gray-100 p-6 rounded-xl shadow-lg space-y-6">
         <h2 className="text-2xl font-bold text-center text-[#003087]">Update Student</h2>
+
+
+        <button
+  onClick={() => router.push('/admin_manage_students')}
+  title="Back"
+  className="fixed bottom-6 left-6 rounded-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
+>
+  <FaArrowLeft size={26} />
+</button>
+
 
         <div className="space-y-4">
           <input

@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
 
 export default function NewSuggestionPage() {
     const router = useRouter();
@@ -12,7 +13,11 @@ export default function NewSuggestionPage() {
         type: 'academic',
         dep: 'public',
     });
-
+            const role = localStorage.getItem("role");
+            if (role !== "student") {
+                router.push("/no-access");
+                return; 
+            }
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
@@ -62,7 +67,13 @@ export default function NewSuggestionPage() {
     return (
         <main className="bg-white min-h-screen py-10 px-6 md:px-12 lg:px-24">
             <h1 className="text-3xl font-bold text-[#003087] mb-8">Submit a Suggestion</h1>
-
+            <button
+                onClick={() => router.push('/student_suggestions')}
+                title="Back"
+                className="fixed bottom-6 left-6 rounded-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
+                >
+                <FaArrowLeft size={26} />
+                </button>
             <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl" encType="multipart/form-data">
 
                 <div>
@@ -126,6 +137,16 @@ export default function NewSuggestionPage() {
                             <option value="public">Public</option>
                             <option value="private">Private</option>
                         </select>
+                         {formData.dep === 'public' && (
+                        <p className="text-sm text-green-600 mt-1">
+                            Note: Since the suggestion is "Public", your name will NOT be displayed to protect your privacy.
+                        </p>
+                        )}
+                            {formData.dep === 'private' && (
+                            <p className="text-sm text-red-600 mt-1">
+                                Note: Since the suggestion is "Private", your name will be displayed with the complaint.
+                            </p>
+                            )}
                     </div>
                 </div>
 
@@ -135,7 +156,9 @@ export default function NewSuggestionPage() {
                 >
                     Submit Suggestion
                 </button>
+                
             </form>
+
         </main>
     );
 }

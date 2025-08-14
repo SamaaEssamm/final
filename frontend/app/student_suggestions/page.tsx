@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { FaArrowLeft } from "react-icons/fa";
 type Suggestion = {
     suggestion_id: string;
     reference_code: number;
@@ -19,6 +19,17 @@ export default function SuggestionsPage() {
     const router = useRouter();
 
     useEffect(() => {
+        const email = localStorage.getItem('student_email');
+  if (!email) {
+    router.push('/login');
+    return;
+  }
+
+  const role = localStorage.getItem("role");
+  if (role !== "student") {
+    router.push("/no-access");
+    return;
+  }
         const fetchData = async () => {
             try {
                 const email = localStorage.getItem("student_email");
@@ -61,6 +72,15 @@ export default function SuggestionsPage() {
                 >
                     + Add Suggestion
                 </button>
+
+                <button
+                onClick={() => router.push('/student_dashboard')}
+                title="Back"
+                className="fixed bottom-6 left-6 rounded-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
+                >
+                <FaArrowLeft size={26} />
+                </button>
+                
             </div>
 
             {loading ? (
@@ -70,8 +90,9 @@ export default function SuggestionsPage() {
             ) : (
                 <div className="overflow-x-auto rounded-xl shadow border border-gray-200">
                     <table className="min-w-full bg-white text-sm">
-                   <thead className="bg-gray-100 text-left">
+                     <thead className="bg-gray-100 text-left">
                     <tr>
+                        {/* العمود الجديد: suggestion code */}
                         <th className="px-4 py-3 font-medium text-gray-700">Suggestion Code</th>
                         <th className="px-4 py-3 font-medium text-gray-700">Title</th>
                         <th className="px-4 py-3 font-medium text-gray-700">Type</th>
@@ -81,22 +102,24 @@ export default function SuggestionsPage() {
                     </thead>
 
 <tbody>
-    {suggestions.map((s) => (
-        <tr
-            key={s.suggestion_id}
-            className="cursor-pointer hover:bg-gray-100 transition border-t border-gray-200"
-            onClick={() => router.push(`/student_suggestions/${s.suggestion_id}`)}
-        >
-            <td className="px-4 py-2">{s.reference_code}</td> {/* عرض الكود */}
-            <td className="px-4 py-2">{s.suggestion_title}</td>
-            <td className="px-4 py-2 capitalize">{s.suggestion_type}</td>
-            <td className="px-4 py-2 capitalize">{s.suggestion_dep}</td>
-            <td className="px-4 py-2">
-                {new Date(s.suggestion_created_at).toLocaleDateString()}
-            </td>
-        </tr>
-    ))}
+  {suggestions.map((s) => (
+    <tr
+      key={s.suggestion_id}
+      className="cursor-pointer hover:bg-gray-100 transition border-t border-gray-200"
+      onClick={() => router.push(`/student_suggestions/${s.suggestion_id}`)}
+    >
+      {/* عرض الكود */}
+      <td className="px-4 py-2">{s.reference_code}</td>
+      <td className="px-4 py-2">{s.suggestion_title}</td>
+      <td className="px-4 py-2 capitalize">{s.suggestion_type}</td>
+      <td className="px-4 py-2 capitalize">{s.suggestion_dep}</td>
+      <td className="px-4 py-2">
+        {new Date(s.suggestion_created_at).toLocaleDateString()}
+      </td>
+    </tr>
+  ))}
 </tbody>
+
 
                     </table>
                 </div>

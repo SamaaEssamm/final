@@ -60,7 +60,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            placeholder="your@email.com"
+            placeholder="academic@email.com"
           />
         </div>
 
@@ -75,7 +75,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            placeholder="****"
+            placeholder="********"
           />
         </div>
 
@@ -91,6 +91,9 @@ export default function LoginPage() {
         >
           Login
         </button>
+
+
+
       </form>
     </div>
   );

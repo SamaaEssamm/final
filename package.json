@@ -1,4 +1,15 @@
 {
+  "name": "complaint_app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm run start"
+  },
+  "dependencies": {
+    "react-icons": "^5.5.0"
+  },
   "devDependencies": {
     "@types/node": "^24.2.1"
   }

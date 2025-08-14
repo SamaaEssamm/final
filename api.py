@@ -12,6 +12,7 @@ import base64
 from models import db, UserRole, ComplaintStatus, SessionStatus, SenderType, ComplaintType, ComplaintDep, SuggestionStatus
 from models import NotificationModel, ComplaintModel, SuggestionModel, ChatMessageModel, ChatSessionModel, UserModel
 from chatbot_api import ask_question_with_rerank
+from email_utils import send_notification_email
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -19,7 +20,6 @@ def allowed_file(filename):
 app = Flask(__name__, static_folder='static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ghada:ghada@localhost:5432/complaint_app'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -29,7 +29,6 @@ CORS(app)
 SUGGESTION_UPLOAD_FOLDER = os.path.join(app.root_path, 'static/uploads/suggestions')
 COMPLAINT_UPLOAD_FOLDER = os.path.join(app.root_path, 'static/uploads/complaints')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf', 'docx'}
-
 
 app.config['SUGGESTION_UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads/suggestions')
 app.config['COMPLAINT_UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads/complaints')
@@ -68,6 +67,7 @@ class Users(Resource):
     
 
 api.add_resource(Users, '/api/addusers/')
+
 
 @app.route("/")
 def home():
@@ -311,8 +311,6 @@ def create_suggestion():
     db.session.commit()
     return jsonify(new_suggestion.to_dict()), 201
 
-
-
 @app.route('/api/get_admin_name/<admin_email>', methods=['GET'])
 def get_admin_by_email(admin_email):
     admin = UserModel.query.filter_by(users_email=admin_email).first()
@@ -412,10 +410,11 @@ def get_all_complaints():
         student_email = 'Unknown'
         
         # Check if the complaint is public and student exists
-        if c.complaint_dep.name == "public":  # or c.complaint_dep.value == 'public' if `.value` gives you the raw string
+        if c.complaint_dep.name == "private":  # or c.complaint_dep.value == 'public' if `.value` gives you the raw string
             student = UserModel.query.filter_by(users_id=c.sender_id).first()
             if student:
                 student_email = student.users_email
+                print(str(c.complaint_type.name))
 
         results.append({
             'complaint_id': c.complaint_id,
@@ -450,7 +449,13 @@ def get_complaint_by_id():
         admin = UserModel.query.get(complaint.responder_id)
         if admin:
             responder_name = admin.users_name
+    print(complaint.response_created_at )
     # Construct response
+    student_email = "Unknown"
+    if complaint.complaint_dep and complaint.complaint_dep.name.lower() == "private":
+        if complaint.sender:
+            student_email = complaint.sender.users_email
+
     return jsonify({
         "status": "success",
         "complaint_id": str(complaint.complaint_id),
@@ -461,7 +466,7 @@ def get_complaint_by_id():
         "complaint_dep": complaint.complaint_dep.name if complaint.complaint_dep else None,
         "complaint_status": complaint.complaint_status.name if complaint.complaint_status else None,
         "complaint_created_at": complaint.complaint_created_at.isoformat() if complaint.complaint_created_at else None,
-        "student_email": complaint.sender.users_email if complaint.sender else None,
+        "student_email": student_email,
         "complaint_file_name": complaint.complaint_file_name,
         "complaint_file_url": complaint.complaint_file_url,
         "response_message": complaint.response_message if complaint.response_message else None,
@@ -469,28 +474,33 @@ def get_complaint_by_id():
         "responder_name": responder_name
     })
 
-
 @app.route('/api/admin/get_all_suggestions', methods=['GET'])
 def get_all_suggestions():
-    suggestion_dep = request.args.get('dep')  # مثلاً: public أو private
-
-    if suggestion_dep and suggestion_dep.lower() in ['public', 'private']:
-        suggestions = SuggestionModel.query.filter(SuggestionModel.suggestion_dep == suggestion_dep.lower()).all()
-    else:
-        suggestions = SuggestionModel.query.all()
-
+    suggestions = SuggestionModel.query.all()
     results = []
 
     for s in suggestions:
-        data = s.to_dict()
-        student = UserModel.query.filter_by(users_id=s.users_id).first()
-        data['student_email'] = (
-            student.users_email if student and s.suggestion_dep.value == 'public' else 'Unknown'
-        )
-        results.append(data)
+        student_email = 'Unknown'
+
+        # لو الاقتراح خاص، نعرض الإيميل
+        if s.suggestion_dep.name == "private":  
+            student = UserModel.query.filter_by(users_id=s.users_id).first()
+            if student:
+                student_email = student.users_email
+
+        results.append({
+            'suggestion_id': s.suggestion_id,
+            'reference_code': s.reference_code,
+            'suggestion_title': s.suggestion_title,
+            'suggestion_message': s.suggestion_message,
+            'suggestion_dep': str(s.suggestion_dep.name),
+            'suggestion_type': str(s.suggestion_type.name),
+            'suggestion_status': str(s.suggestion_status.value),
+            'suggestion_date': s.suggestion_created_at.strftime("%Y-%m-%d"),
+            'student_email': student_email
+        })
 
     return jsonify(results), 200
-
 
 @app.route('/api/admin/get_suggestion', methods=['GET'])
 def get_suggestion_by_id():
@@ -512,12 +522,13 @@ def get_suggestion_by_id():
 
     return jsonify({
         'suggestion_id': str(suggestion.suggestion_id),
+        'reference_code': suggestion.reference_code,
         'suggestion_title': suggestion.suggestion_title,
         'suggestion_message': suggestion.suggestion_message,
         'suggestion_type': str(suggestion.suggestion_type.name),
         'suggestion_dep': str(suggestion.suggestion_dep),
         'suggestion_date': suggestion.suggestion_created_at,
-        'student_email': student.users_email if student and suggestion.suggestion_dep.name == "public" else "Unknown",
+        'student_email': student.users_email if student and suggestion.suggestion_dep.name == "private" else "Unknown",
         'suggestion_status': str(suggestion.suggestion_status.value),
         'suggestion_file_name': suggestion.suggestion_file_name,
         'suggestion_file_url': suggestion.suggestion_file_url
@@ -584,29 +595,39 @@ def respond_to_complaint():
     complaint = ComplaintModel.query.get(complaint_id)
 
     if complaint and not complaint.response_message:
+        # حفظ الرد
         complaint.response_message = response_message
+        complaint.responder_id = admin_id
+        complaint.complaint_status = 'done'  # ✅ الحالة تبقى تم الرد
+        complaint.response_created_at = datetime.now(timezone.utc)
 
-        complaint.responder_id = admin_id  # <-- You must have this column in the model
-
-        # 🆕 Send notification to student
+        # إشعار داخلي للطالب
         student_id = complaint.sender_id
         notification = NotificationModel(
-        user_id=student_id,
-        notifications_message="Your complaint has been answered. Click to view.",
-        complaint_id=complaint.complaint_id  # ✅ لازم يتحط علشان يحصل توجيه
-    )
-
+            user_id=student_id,
+            notifications_message="Your complaint has been answered. Click to view.",
+            complaint_id=complaint.complaint_id
+        )
         db.session.add(notification)
-        """
-        error in merge
 
-        complaint.complaint_status = 'done'  # ✅ Set status to responded
-        complaint.response_created_at = datetime.now(timezone.utc)
-"""
+        # إرسال إيميل للطالب
+        student = UserModel.query.get(student_id)
+        if student:
+            subject = "Your Complaint Has Been Responded To"
+            body = (
+                f"Dear {student.users_name},\n\n"
+                "Your complaint has been reviewed and responded to.\n"
+                "Please log in to the platform to read the full response.\n\n"
+                "Thank you."
+            )
+            send_notification_email(student.users_email, subject, body)
+
         db.session.commit()
+
         return jsonify({'status': 'success'})
     else:
         return jsonify({'status': 'fail', 'reason': 'Invalid complaint or already responded'})
+
 
 @app.route('/api/get_admin_id', methods=['GET'])
 def get_admin_id():
@@ -620,6 +641,7 @@ def get_admin_id():
         })
     else:
         return jsonify({'status': 'fail', 'reason': 'Admin not found'})
+
 
 @app.route('/api/admin/notifications', methods=['GET'])
 def get_admin_notifications():
@@ -688,6 +710,7 @@ def mark_student_notification_read():
     notification.notification_is_read = True
     db.session.commit()
     return jsonify({"status": "success"})
+
 @app.route('/static/uploads/complaints/<filename>')
 def uploaded_complaint_file(filename):
     return send_from_directory(app.config['COMPLAINT_UPLOAD_FOLDER'], filename)
@@ -696,8 +719,6 @@ def uploaded_complaint_file(filename):
 def uploaded_suggestion_file(filename):
     return send_from_directory(app.config['SUGGESTION_UPLOAD_FOLDER'], filename)
 
-
-#done
 @app.route("/api/chat/ask", methods=["POST"])
 def ask():
     data = request.get_json()
@@ -762,13 +783,8 @@ def ask():
         session.session_title = question[:30] + "..." if len(question) > 30 else question
     db.session.commit()
 
-
-
-
     return jsonify({"answer": answer})
 
-
-#done
 @app.route("/api/chat/start_session", methods=["POST"])
 def start_session():
     data = request.get_json()
@@ -806,14 +822,12 @@ def start_session():
 # Commit everything
     db.session.commit()
 
-
     return jsonify({
         "session_id": str(new_session.sessions_id),
         "title": new_session.session_title,
         "created_at": new_session.session_created_at
     })
 
-#done
 @app.route("/api/chat/messages", methods=["GET"])
 def get_messages():
     session_id = request.args.get("session_id")
@@ -828,7 +842,6 @@ def get_messages():
         for m in messages
     ])
 
-#done
 @app.route("/api/chat/send_message", methods=["POST"])
 def send_message():
     data = request.get_json()
@@ -862,8 +875,6 @@ def send_message():
         "bot_reply": bot_reply
     })
 
-
-#done
 @app.route("/api/chat/close_session", methods=["PATCH"])
 def close_session():
     data = request.get_json()
@@ -876,27 +887,32 @@ def close_session():
     session.session_status = SessionStatus.close
     db.session.commit()
     return jsonify({"status": "closed"})
-
-#done
 @app.route("/api/chat/sessions", methods=["GET"])
 def get_chat_sessions():
     email = request.args.get("email")
-    print(email, " Hi");
-    user = UserModel.query.filter_by(users_email=email).first()
-    if not user:
-        return jsonify([])  # Return empty list if user doesn't exist
+    if not email:
+        return jsonify({"error": "Missing email"}), 400
 
-    sessions = ChatSessionModel.query.filter_by(users_id=user.users_id).order_by(ChatSessionModel.session_created_at.desc()).all()
+    user = db.session.query(UserModel).filter_by(users_email=email).first()
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    sessions = (
+        db.session.query(ChatSessionModel)
+        .filter_by(users_id=user.users_id)
+        .order_by(ChatSessionModel.session_created_at.desc())
+        .all()
+    )
 
     return jsonify([
         {
             "session_id": str(s.sessions_id),
             "title": s.session_title,
-            "created_at": s.session_created_at.isoformat()
+            "created_at": s.session_created_at.isoformat(),
+            "status": s.session_status.value  # ✅ add this
         }
         for s in sessions
     ])
-
 
 if __name__ == '__main__':
     app.run(debug=True)

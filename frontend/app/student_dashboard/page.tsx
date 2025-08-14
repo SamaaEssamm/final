@@ -1,7 +1,7 @@
 'use client';
-import { useRef } from "react";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+
 export default function Dashboard() {
   const [studentName, setStudentName] = useState('Student');
   const [isLoading, setIsLoading] = useState(true);
@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+
   const handleNotificationClick = (notification: Notification) => {
   if (!notification.is_read) {
     // اعمل له تحديث في قاعدة البيانات إنه مقروء
@@ -45,10 +46,16 @@ type Notification = {
 
 //noti useeffect 
 useEffect(() => {
+
   const email = localStorage.getItem('student_email');
   if (!email) {
     router.push('/login');
   } else {
+     const role = localStorage.getItem("role");
+  if (role !== "student") {
+    router.push("/no-access");
+    return; 
+  }
     // 1. Fetch student name
     fetch(`http://localhost:5000/api/student/${encodeURIComponent(email)}`)
       .then(res => res.json())
@@ -89,6 +96,9 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen text-[#003087] flex flex-col">
+
+
+
       {/* Header */}
       <header className="w-full flex justify-between items-center px-10 py-4 bg-transparent shadow-none">
         <div className="flex flex-col items-center">
@@ -201,10 +211,17 @@ useEffect(() => {
   </ul>
 </nav>
 
-     {/* Welcome Section */}
+
+      {/* Welcome Section */}
       <section
   className="flex-grow flex flex-col items-center justify-center text-center px-6"
-  style={{ backgroundImage: "url('/home1-ar-lzneos.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
+  style={{
+    backgroundColor: 'white',
+    backgroundImage: "url('/home1-ar-lzneos.jpg')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  }}
+
 >
   <h1 className="text-5xl font-extrabold text-white drop-shadow-lg mb-4">
     Welcome, {studentName} 🎓
@@ -213,6 +230,7 @@ useEffect(() => {
     This is your university platform for complaints and suggestions
   </p>
 </section>
+
 
       {/* Floating Chatbot Button */}
       <button
@@ -236,8 +254,37 @@ useEffect(() => {
           </div>
         </div>
       )}
+  
+      
 
+{/* Footer */}
+<footer className="bg-[#003087] text-white py-4 mt-auto transition-all duration-500 hover:py-10 group">
+  <div className="container mx-auto text-center text-sm">
+    {/* Always visible */}
+    <p>© {new Date().getFullYear()} Faculty of Computer & Information - Assiut University</p>
+    
+
+    {/* Hidden until footer hover */}
+    <div className="overflow-hidden max-h-0 opacity-0 transition-all duration-500 group-hover:max-h-40 group-hover:opacity-100 mt-3">
+      <p className="mt-2">📍 Location: Assiut University, Egypt</p>
+      <p>📞 Phone: (088) 347678</p>
+      <p>🌐 Website: <a href="https://www.aun.edu.eg/fci/ar/home-2" className="underline hover:text-gray-300">www.aun.edu.eg</a></p>
+      <p className="mt-1">
+      Contact:{" "}
+      <a href="mailto:fci_assiut@fci.au.edu.eg" className="underline hover:text-gray-300">
+        fci_assiut@fci.au.edu.eg
+      </a>
+      </p>
+      <div className="mt-2 flex justify-center gap-4">
+        <a href="https://www.facebook.com/profile.php?id=100057545794964&ref=hl#" className="hover:text-gray-300">Facebook</a>
+        <a href="https://youtube.com/@facultyofcomputersandinfor1234?si=60jcJIm4spA4a8o_" className="hover:text-gray-300">YouTube</a>
+        <a href="https://x.com/fci_aun" className="hover:text-gray-300">Twitter</a>
+      </div>
     </div>
+  </div>
+</footer>
+
+
+</div>
   );
 }
-
