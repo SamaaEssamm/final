@@ -92,7 +92,6 @@ export default function SuggestionsPage() {
                     <table className="min-w-full bg-white text-sm">
                      <thead className="bg-gray-100 text-left">
                     <tr>
-                        {/* العمود الجديد: suggestion code */}
                         <th className="px-4 py-3 font-medium text-gray-700">Suggestion Code</th>
                         <th className="px-4 py-3 font-medium text-gray-700">Title</th>
                         <th className="px-4 py-3 font-medium text-gray-700">Department</th>
@@ -108,7 +107,7 @@ export default function SuggestionsPage() {
       className="cursor-pointer hover:bg-gray-100 transition border-t border-gray-200"
       onClick={() => router.push(`/student_suggestions/${s.suggestion_id}`)}
     >
-      {/* عرض الكود */}
+   
       <td className="px-4 py-2">{s.reference_code}</td>
       <td className="px-4 py-2">{s.suggestion_title}</td>
       <td className="px-4 py-2 capitalize">{s.suggestion_type}</td>

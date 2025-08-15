@@ -14,8 +14,7 @@ export default function NoAccessPage() {
   } else if (studentEmail && !adminEmail) {
     router.push("/student_dashboard");
   } else if (adminEmail && studentEmail) {
-    // If somehow both exist, choose priority OR clear one
-    // Example: prefer admin dashboard
+  
     router.push("/admin_dashboard");
   } else {
     router.push("/login");

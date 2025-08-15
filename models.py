@@ -63,8 +63,8 @@ class ComplaintModel(db.Model):
     complaint_status   = db.Column(ENUM(ComplaintStatus), nullable=False, default=ComplaintStatus.under_checking)
     complaint_title    = db.Column(db.String(100))
     complaint_message  = db.Column(db.Text, nullable=False)
-    complaint_file_url = db.Column(db.String(255))  # المسار النسبي أو الكامل للفايل
-    complaint_file_name = db.Column(db.String(255))  # الاسم الأصلي
+    complaint_file_url = db.Column(db.String(255)) 
+    complaint_file_name = db.Column(db.String(255)) 
     complaint_created_at= db.Column(TIMESTAMP(timezone=True), server_default=db.func.now())
     responder_id       = db.Column(UUID(as_uuid=True), db.ForeignKey("users.users_id", ondelete="SET NULL"))
     response_message   = db.Column(db.Text)
@@ -100,8 +100,8 @@ class SuggestionModel(db.Model):
     suggestion_dep       = db.Column(ENUM(ComplaintDep), nullable=False, default=ComplaintDep.private)
     suggestion_title     = db.Column(db.String(100))
     suggestion_message   = db.Column(db.Text, nullable=False)
-    suggestion_file_url = db.Column(db.String(255))  # المسار النسبي أو الكامل للفايل
-    suggestion_file_name = db.Column(db.String(255))  # الاسم الأصلي
+    suggestion_file_url = db.Column(db.String(255)) 
+    suggestion_file_name = db.Column(db.String(255))  
     suggestion_created_at= db.Column(TIMESTAMP(timezone=True), server_default=db.func.now())
     suggestion_status = db.Column(db.Enum(SuggestionStatus), nullable=False, default=SuggestionStatus.unreviewed)
     

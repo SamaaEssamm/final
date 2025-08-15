@@ -13,13 +13,19 @@ from models import db, UserRole, ComplaintStatus, SessionStatus, SenderType, Com
 from models import NotificationModel, ComplaintModel, SuggestionModel, ChatMessageModel, ChatSessionModel, UserModel
 from chatbot_api import ask_question_with_rerank
 from email_utils import send_notification_email
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 app = Flask(__name__, static_folder='static')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://sama:1234@localhost:5432/complaints_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['APP_PASSWORD'] = os.getenv('APP_PASSWORD')
+
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -32,7 +38,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf', 'docx'}
 
 app.config['SUGGESTION_UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads/suggestions')
 app.config['COMPLAINT_UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads/complaints')
-
 
 user_args = reqparse.RequestParser()
 user_args.add_argument('name', type = str, required = True, help = "Name cannot be blank")
@@ -83,19 +88,15 @@ def login():
     if not email or not password:
         return jsonify({"message": "Email and password are required"}), 400
 
-    # نجيب المستخدم من الداتا بيز
     user = UserModel.query.filter_by(users_email=email).first()
 
-    # لو مفيش مستخدم أو الباسورد غلط
     if not user or not check_password_hash(user.users_password, password):
         return jsonify({"message": "Invalid email or password"}), 401
 
-    # لو الدور طالب → لازم يكون الإيميل أكاديمي
     if user.users_role.name.lower() == "student":
         if not email.lower().endswith("@compit.aun.edu.eg"):
             return jsonify({"message": "Students must use their academic email ending with @compit.aun.edu.eg"}), 400
 
-    # التحقق من قوة الباسورد
     if len(password) < 6:
         return jsonify({"message": "Password must be at least 6 characters long"}), 400
 
@@ -120,7 +121,7 @@ def get_student_by_email(email):
 
 @app.route("/api/student/showcomplaints", methods=["GET"])
 def get_complaints():
-    student_email = request.args.get("student_email")  # ✅ Get from query string
+    student_email = request.args.get("student_email") 
 
     if not student_email:
         return jsonify({"message": "Missing email"}), 400
@@ -128,17 +129,17 @@ def get_complaints():
     user = UserModel.query.filter_by(users_email=student_email).first()
 
     if not user:
-        return jsonify([])  # Return an empty list if user not found
+        return jsonify([]) 
 
     complaints = ComplaintModel.query.filter_by(sender_id=user.users_id).all()
     complaints_data = []
     for complaint in complaints:
         data = complaint.to_dict()
-        data["complaint_status"] = complaint.complaint_status.value  # ✅ force enum to string
+        data["complaint_status"] = complaint.complaint_status.value  
         print(complaint.complaint_status.value)
         complaints_data.append(data)
 
-    return jsonify(complaints_data)  # ✅ Return array of complaints
+    return jsonify(complaints_data) 
 
 @app.route("/api/student/get_complaint", methods=["GET"])
 def get_single_complaint():
@@ -172,16 +173,14 @@ def create_complaint():
     if not user:
         return jsonify({"message": "User not found"}), 404
 
-    # بيانات الشكوى
     complaint_title = request.form.get('complaint_title')
     complaint_message = request.form.get('complaint_message')
     complaint_type = request.form.get('complaint_type')
     complaint_dep = request.form.get('complaint_dep')
 
-    # تجهيز بيانات الملف
     file_url = None
     file_name = None
-    file = request.files.get('file')  # ← لازم الاسم يكون مطابق في الفورم
+    file = request.files.get('file')  
 
     if file:
         filename = secure_filename(file.filename)
@@ -193,8 +192,6 @@ def create_complaint():
         file_url = f"http://localhost:5000/static/uploads/complaints/{filename}"
         file_name = filename
 
-
-    # إنشاء الشكوى
     new_complaint = ComplaintModel(
         complaint_title=complaint_title,
         complaint_message=complaint_message,
@@ -208,7 +205,6 @@ def create_complaint():
     db.session.add(new_complaint)
     db.session.flush()
 
-    # إشعارات
     admin = UserModel.query.filter_by(users_role='admin').first()
     if admin:
         notification = NotificationModel(
@@ -307,7 +303,7 @@ def create_suggestion():
 
     db.session.add(new_suggestion)
     db.session.flush()
-    # إشعار الإدمن
+    
     admin = UserModel.query.filter_by(users_role='admin').first()
     if admin:
         admin_notification = NotificationModel(
@@ -317,7 +313,7 @@ def create_suggestion():
         )
         db.session.add(admin_notification)
 
-    # إشعار الطالب
+   
     student_notification = NotificationModel(
         user_id=user.users_id,
         notifications_message="Your suggestion has been received. Thank you for sharing your thoughts!",
@@ -361,21 +357,18 @@ def add_student():
     email = data.get('users_email')
     password = data.get('users_password')
 
-    # تحقق من الحقول المطلوبة
+    
     if not all([name, email, password]):
         return jsonify({'status': 'fail', 'message': 'Missing fields'}), 400
 
-    # تحقق من الإيميل الأكاديمي
     if not email.lower().endswith("@compit.aun.edu.eg"):
         return jsonify({'status': 'fail', 'message': 'Email must end with @compit.aun.edu.eg'}), 400
 
-    # تحقق من قوة الباسورد
     if len(password) < 6:
         return jsonify({'status': 'fail', 'message': 'Password must be at least 6 characters long'}), 400
     if not re.search(r"[A-Za-z]", password) or not re.search(r"[0-9]", password):
         return jsonify({'status': 'fail', 'message': 'Password must contain both letters and numbers'}), 400
 
-    # تحقق من وجود المستخدم
     existing_user = UserModel.query.filter_by(users_email=email).first()
     if existing_user:
         return jsonify({'status': 'fail', 'message': 'Email already exists'}), 409
@@ -407,11 +400,10 @@ def update_student():
     if not student:
         return jsonify({'status': 'fail', 'message': 'Student not found'}), 404
 
-    # تحديث الاسم
     if new_name:
         student.users_name = new_name
 
-    # تحديث الباسورد مع التحقق
+
     if new_password:
         if len(new_password) < 6:
             return jsonify({'status': 'fail', 'message': 'Password must be at least 6 characters long'}), 400
@@ -419,7 +411,6 @@ def update_student():
             return jsonify({'status': 'fail', 'message': 'Password must contain both letters and numbers'}), 400
         student.users_password = generate_password_hash(new_password)
 
-    # تحديث الإيميل الأكاديمي
     if new_email:
         if not new_email.lower().endswith("@compit.aun.edu.eg"):
             return jsonify({'status': 'fail', 'message': 'Email must end with @compit.aun.edu.eg'}), 400
@@ -452,8 +443,8 @@ def get_all_complaints():
     for c in complaints:
         student_email = 'Unknown'
         
-        # Check if the complaint is public and student exists
-        if c.complaint_dep.name == "private":  # or c.complaint_dep.value == 'public' if `.value` gives you the raw string
+        
+        if c.complaint_dep.name == "private": 
             student = UserModel.query.filter_by(users_id=c.sender_id).first()
             if student:
                 student_email = student.users_email
@@ -486,14 +477,14 @@ def get_complaint_by_id():
     if not complaint:
         return jsonify({'status': 'fail', 'message': 'Complaint not found'}), 404
 
-    # Get admin name if responded
+   
     responder_name = None
     if complaint.responder_id:
         admin = UserModel.query.get(complaint.responder_id)
         if admin:
             responder_name = admin.users_name
     print(complaint.response_created_at )
-    # Construct response
+ 
     student_email = "Unknown"
     if complaint.complaint_dep and complaint.complaint_dep.name.lower() == "private":
         if complaint.sender:
@@ -525,7 +516,7 @@ def get_all_suggestions():
     for s in suggestions:
         student_email = 'Unknown'
 
-        # لو الاقتراح خاص، نعرض الإيميل
+       
         if s.suggestion_dep.name == "private":  
             student = UserModel.query.filter_by(users_id=s.users_id).first()
             if student:
@@ -583,7 +574,7 @@ def get_suggestion_by_id():
 @app.route('/api/admin/update_suggestion_status', methods=['POST', 'OPTIONS'])
 def update_suggestion_status():
     if request.method == 'OPTIONS':
-        return '', 204  # مهم علشان يرد على الـ preflight
+        return '', 204 
 
     data = request.get_json()
     suggestion_id = data.get("suggestion_id")
@@ -607,7 +598,7 @@ def update_status():
         return jsonify({'status': 'fail', 'message': 'Missing required fields'}), 400
 
     try:
-        complaint_id = uuid.UUID(data['complaint_id'])  # Ensure it's a UUID object
+        complaint_id = uuid.UUID(data['complaint_id']) 
     except (ValueError, TypeError):
         return jsonify({'status': 'fail', 'message': 'Invalid complaint_id'}), 400
 
@@ -638,13 +629,13 @@ def respond_to_complaint():
     complaint = ComplaintModel.query.get(complaint_id)
 
     if complaint and not complaint.response_message:
-        # حفظ الرد
+        
         complaint.response_message = response_message
         complaint.responder_id = admin_id
-        complaint.complaint_status = 'done'  # ✅ الحالة تبقى تم الرد
+        complaint.complaint_status = 'done'  
         complaint.response_created_at = datetime.now(timezone.utc)
 
-        # إشعار داخلي للطالب
+       
         student_id = complaint.sender_id
         notification = NotificationModel(
             user_id=student_id,
@@ -653,7 +644,7 @@ def respond_to_complaint():
         )
         db.session.add(notification)
 
-        # إرسال إيميل للطالب
+       
         student = UserModel.query.get(student_id)
         if student:
             subject = "Your Complaint Has Been Responded To"
@@ -692,11 +683,11 @@ def get_admin_notifications():
     if not admin:
         return jsonify([])
 
-    # --- إضافة أوتوماتيك للإشعارات الناقصة ---
+   
     complaints = ComplaintModel.query.filter(ComplaintModel.complaint_created_at >= admin.users_created_at).all()
     suggestions = SuggestionModel.query.filter(SuggestionModel.suggestion_created_at >= admin.users_created_at).all()
 
-    # إضافة إشعارات للشكاوى (بنفس صيغة الرسالة المستخدمة عند إنشاء الشكوى)
+  
     for comp in complaints:
         exists = NotificationModel.query.filter_by(
             user_id=admin.users_id,
@@ -706,11 +697,11 @@ def get_admin_notifications():
             db.session.add(NotificationModel(
                 user_id=admin.users_id,
                 complaint_id=comp.complaint_id,
-                notifications_message="New complaint has been received.",  # نفس الرسالة المستخدمة عند الإنشاء
+                notifications_message="New complaint has been received.",  
                 notification_created_at=comp.complaint_created_at
             ))
 
-    # إضافة إشعارات للاقتراحات
+  
     for sugg in suggestions:
         exists = NotificationModel.query.filter_by(
             user_id=admin.users_id,
@@ -827,10 +818,7 @@ def ask():
         else:
             return jsonify({"error": "No active chat session found"}), 404
 
-    # Call your rerank-based Groq response generator
     answer = ask_question_with_rerank(question)
-
-    # Save the question and answer in DB
     question_msg = ChatMessageModel(
         session_id=session_id,
         sender='user',
@@ -848,7 +836,7 @@ def ask():
     # Get the chat session by ID
     session = db.session.query(ChatSessionModel).filter_by(sessions_id=session_id).first()
 
-# Count only user/bot messages (ignore "New Chat Started" system message)
+
     real_messages_count = (
     db.session.query(ChatMessageModel)
     .filter(
@@ -857,7 +845,7 @@ def ask():
     )
     .count()
     )
-# Set title only after the first actual user+bot exchange
+
     if session and real_messages_count == 3:
         session.session_title = question[:30] + "..." if len(question) > 30 else question
     db.session.commit()
@@ -879,17 +867,14 @@ def start_session():
         {ChatSessionModel.session_status: SessionStatus.close}
     )
 
-    # Create new session
-    # Create new chat session (no need to assign sessions_id manually)
     new_session = ChatSessionModel(
     users_id=user.users_id,
     session_title=first_message or "New Chat",
     session_status=SessionStatus.open
     )
     db.session.add(new_session)
-    db.session.flush()  # Generates sessions_id and keeps it accessible
+    db.session.flush() 
 
-# Now add the first message, using the generated session_id
     if first_message:
         new_msg = ChatMessageModel(
         session_id=new_session.sessions_id,
@@ -898,7 +883,6 @@ def start_session():
     )
     db.session.add(new_msg)
 
-# Commit everything
     db.session.commit()
 
     return jsonify({
@@ -930,7 +914,7 @@ def send_message():
     if not session_id or not user_message:
         return jsonify({"error": "Missing session_id or message"}), 400
 
-    # Add user message
+
     user_msg = ChatMessageModel(
         session_id=session_id,
         sender=SenderType.user,
@@ -938,7 +922,7 @@ def send_message():
     )
     db.session.add(user_msg)
 
-    # 🧠 Placeholder bot logic — you can replace with your Groq/Mixtral call
+    
     bot_reply = f"Bot received: {user_message}"
 
     bot_msg = ChatMessageModel(
@@ -988,7 +972,7 @@ def get_chat_sessions():
             "session_id": str(s.sessions_id),
             "title": s.session_title,
             "created_at": s.session_created_at.isoformat(),
-            "status": s.session_status.value  # ✅ add this
+            "status": s.session_status.value  
         }
         for s in sessions
     ])

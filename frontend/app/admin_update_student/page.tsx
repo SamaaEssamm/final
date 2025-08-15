@@ -36,7 +36,7 @@ if (role !== "admin") return;
       const data = await response.json();
       if (response.ok) {
         setMessage('Student updated successfully!');
-        // Optionally clear form:
+
         setOldEmail('');
         setNewName('');
         setNewEmail('');

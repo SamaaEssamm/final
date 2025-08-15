@@ -111,7 +111,7 @@ const typeLabels: { [key: string]: string } = {
 
 
       <div className="flex gap-4 mb-6">
-  {/* Type Filter */}
+  {/* Dep Filter */}
   <div>
     <label htmlFor="typeFilter" className="mr-2 font-medium text-gray-700">
 

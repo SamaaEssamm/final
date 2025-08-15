@@ -40,7 +40,7 @@ const toggleMenu = (sessionId: string) => {
     }
   }, [messages]);
 
-  // Fetch chat sessions when userEmail is set
+
   useEffect(() => {
   if (!userEmail) return;
 
@@ -52,7 +52,7 @@ const toggleMenu = (sessionId: string) => {
       if (data.length > 0) {
         const openSession = data.find((s: ChatSession) => s.status === "open");
         if (openSession) {
-          setSelectedSession(openSession.session_id); // ✅ open default session
+          setSelectedSession(openSession.session_id); 
         }
       }
     })
@@ -85,7 +85,7 @@ const handleDelete = async (sessionId: string) => {
   if (selectedSession === sessionId) setSelectedSession(null);
 };
 
-  // Fetch messages for selected session
+ 
   useEffect(() => {
     if (!selectedSession) return;
 
@@ -94,7 +94,7 @@ const handleDelete = async (sessionId: string) => {
       .then(data => setMessages(data));
   }, [selectedSession]);
 
-  // Create new session
+ 
   const startNewChat = async () => {
     const res = await fetch('http://localhost:5000/api/chat/start_session', {
       method: 'POST',
@@ -110,7 +110,7 @@ const handleDelete = async (sessionId: string) => {
     setSessions(updated);
   };
 
-  // Send a message
+
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedSession) return;
 
@@ -142,7 +142,7 @@ const handleDelete = async (sessionId: string) => {
         };
         setMessages(prev => [...prev, botMsg]);
 
-        // Refresh session titles
+    
         const updated = await fetch(`http://localhost:5000/api/chat/sessions?email=${userEmail}`).then(res => res.json());
         setSessions(updated);
       } else {
@@ -174,7 +174,7 @@ const handleDelete = async (sessionId: string) => {
         : 'bg-white hover:bg-gray-200'
     }`}
   >
-    {/* العنوان */}
+    
     <button
       onClick={() => setSelectedSession(session.session_id)}
       className="flex-1 text-left py-2 px-3 truncate"
@@ -257,7 +257,6 @@ const handleDelete = async (sessionId: string) => {
       </motion.div>
     ))}
   </AnimatePresence>
-  {/* 👇 this div acts as the scroll target */}
   <div ref={messagesEndRef} />
 </div>
 

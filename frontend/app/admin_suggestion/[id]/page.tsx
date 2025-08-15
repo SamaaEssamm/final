@@ -42,7 +42,7 @@ export default function suggestionDetailsPage() {
       setIsSuccess(false);
     }
 
-    // Clear message after 3 seconds
+  
     setTimeout(() => {
       setMessage(null);
     }, 3000);
@@ -57,7 +57,7 @@ export default function suggestionDetailsPage() {
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
         setSuggestion(data);
-        setStatus(data.status || 'unreviewed'); // Set initial status from fetched data
+        setStatus(data.status || 'unreviewed'); 
       } catch (error) {
         console.error('Error fetching suggestion:', error);
       } finally {

@@ -12,44 +12,38 @@ export default function RespondPage() {
 
   const [responseText, setResponseText] = useState<string>('');
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>(''); // success / server messages
-  const [error, setError] = useState<string>(''); // field validation error (red under textarea)
+  const [message, setMessage] = useState<string>(''); 
+  const [error, setError] = useState<string>(''); 
 
-  // === Meaningful sentence check (single, reused function) ===
+
   const isMeaningfulText = (text: string) => {
     const cleaned = (text || '').trim();
 
-    // require at least two words
     const words = cleaned.split(/\s+/).filter(w => w.length > 0);
     if (words.length < 2) return false;
 
-    // require at least some Arabic or English letters
+
     if (!/[a-zA-Z\u0600-\u06FF]/.test(cleaned)) return false;
-
-    // reject if only numbers/spaces
     if (/^[\d\s]+$/.test(cleaned)) return false;
-
-    // reject if only symbols (no letters/numbers)
     if (/^[^a-zA-Z\u0600-\u06FF0-9\s]+$/.test(cleaned)) return false;
 
-    // require some variety (not the same word repeated)
+    
     const normalized = words.map(w => w.toLowerCase().replace(/[^a-zA-Z\u0600-\u06FF0-9]/g, ''));
     const unique = new Set(normalized.filter(w => w));
     if (unique.size < 2) return false;
 
-    // reject very short overall
     if (cleaned.length < 5) return false;
 
     return true;
   };
-  // ============================================================
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage('');
     setError('');
 
-    // validation using responseText
+   
     if (!isMeaningfulText(responseText)) {
       setError('Please enter a meaningful response in Arabic or English (at least two words).');
       return;
@@ -64,7 +58,6 @@ export default function RespondPage() {
     setSubmitting(true);
 
     try {
-      // Fetch admin ID using email
       const idRes = await fetch(`http://127.0.0.1:5000/api/get_admin_id?admin_email=${adminEmail}`);
       const idData = await idRes.json();
       const adminId = idData.status === 'success' ? idData.admin_id : null;
@@ -75,7 +68,7 @@ export default function RespondPage() {
         return;
       }
 
-      // Submit response
+   
       const res = await fetch('http://127.0.0.1:5000/api/admin/respond', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -88,7 +81,6 @@ export default function RespondPage() {
 
       const result = await res.json();
       if (result.status === 'success') {
-        // Also update complaint status to Responded
         await fetch('http://127.0.0.1:5000/api/admin/update_status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -126,17 +118,15 @@ export default function RespondPage() {
           value={responseText}
           onChange={(e) => {
             setResponseText(e.target.value);
-            // inline clearing of error when input becomes valid
+           
             if (error && isMeaningfulText(e.target.value)) setError('');
           }}
           placeholder="Write your response here..."
           className={`w-full border rounded-lg p-4 h-40 mb-2 ${error ? 'border-red-500' : 'border-gray-300'}`}
         />
 
-        {/* red validation message under textarea */}
+ 
         {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
-
-        {/* server/success message */}
         {message && <p className="text-sm text-green-600 mb-4">{message}</p>}
 
         <button

@@ -6,20 +6,19 @@ export default function Dashboard() {
   const [studentName, setStudentName] = useState('Student');
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const redirected = useRef(false); // 👈 prevent repeated redirects
+  const redirected = useRef(false); 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
 
   const handleNotificationClick = (notification: Notification) => {
   if (!notification.is_read) {
-    // اعمل له تحديث في قاعدة البيانات إنه مقروء
+   
     fetch('http://localhost:5000/api/admin/mark_notification_read', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ notification_id: notification.id }) // محتاجة الـ id
+      body: JSON.stringify({ notification_id: notification.id }) 
     }).then(() => {
-      // بعد ما يتعمل update، نحدث حالة الإشعارات في الواجهة
       setNotifications(prev =>
         prev.map(n =>
           n === notification ? { ...n, is_read: true } : n
@@ -29,7 +28,6 @@ export default function Dashboard() {
   }
 
 
-  // توجيه للشكوى
   if (notification.complaint_id) {
     router.push(`/student_complaint_details?id=${notification.complaint_id}`);
   }
@@ -56,7 +54,7 @@ useEffect(() => {
     router.push("/no-access");
     return; 
   }
-    // 1. Fetch student name
+   
     fetch(`http://localhost:5000/api/student/${encodeURIComponent(email)}`)
       .then(res => res.json())
       .then(data => {
@@ -72,7 +70,6 @@ useEffect(() => {
         setIsLoading(false);
       });
 
-    // 2. Fetch notifications for student
     fetch(`http://localhost:5000/api/student/notifications?student_email=${encodeURIComponent(email)}`)
       .then(res => res.json())
       .then(data => {
@@ -146,7 +143,7 @@ useEffect(() => {
 )}
 
   </button>
-   {/* Dropdown تحت الجرس */}
+   {/* Dropdown */}
   {showNotifications && (
     <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-300 rounded shadow-lg p-4 z-50 max-h-96 overflow-y-auto">
       <h2 className="text-lg font-bold text-[#003087] mb-2">Notifications</h2>
@@ -163,7 +160,7 @@ useEffect(() => {
     body: JSON.stringify({ notification_id: n.id }),
   });
 
-  // تأكدي إن فيه ID صالح قبل ما تعملي push
+  
   if (n.suggestion_id) {
     router.push(`/student_suggestions/${n.suggestion_id}`);
   } else if (n.complaint_id) {
@@ -241,7 +238,7 @@ useEffect(() => {
         💬
       </button>
 
-      {/* Optional: Chat popup placeholder */}
+     
       {chatOpen && (
         <div className="fixed bottom-20 right-6 bg-white w-96 h-96 p-4 rounded-xl shadow-xl border border-blue-200 z-50 flex flex-col">
           <div className="flex justify-between items-center mb-2">
@@ -249,7 +246,7 @@ useEffect(() => {
             <button onClick={() => setChatOpen(false)} className="text-red-500 hover:text-red-700">✖</button>
           </div>
           <div className="flex-grow overflow-y-auto border-t pt-2 text-sm text-gray-700">
-            {/* Your chat content goes here, or integrate Chat component */}
+         
             <p className="text-center text-gray-500 mt-10">Chatbot UI coming soon...</p>
           </div>
         </div>
@@ -260,11 +257,9 @@ useEffect(() => {
 {/* Footer */}
 <footer className="bg-[#003087] text-white py-4 mt-auto transition-all duration-500 hover:py-10 group">
   <div className="container mx-auto text-center text-sm">
-    {/* Always visible */}
     <p>© {new Date().getFullYear()} Faculty of Computer & Information - Assiut University</p>
     
 
-    {/* Hidden until footer hover */}
     <div className="overflow-hidden max-h-0 opacity-0 transition-all duration-500 group-hover:max-h-40 group-hover:opacity-100 mt-3">
       <p className="mt-2">📍 Location: Assiut University, Egypt</p>
       <p>📞 Phone: (088) 347678</p>

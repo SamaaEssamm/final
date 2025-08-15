@@ -71,7 +71,7 @@ useEffect(() => {
     if (!email) { 
       if (!redirected.current) {
         redirected.current = true;
-        router.replace('/login'); // use replace instead of push
+        router.replace('/login');
       }
  
     } else {
@@ -157,7 +157,7 @@ useEffect(() => {
 
   </button>
   
-  {/* Dropdown تحت الجرس */}
+  {/* Dropdown */}
   {showNotifications && (
     <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-300 rounded shadow-lg p-4 z-50 max-h-96 overflow-y-auto">
       <h2 className="text-lg font-bold text-[#003087] mb-2">Notifications</h2>
@@ -174,7 +174,6 @@ useEffect(() => {
     body: JSON.stringify({ notification_id: n.id }),
   });
 
-  // تأكدي إن فيه ID صالح قبل ما تعملي push
   if (n.suggestion_id) {
     router.push(`/admin_suggestion/${n.suggestion_id}`);
   } else if (n.complaint_id) {
@@ -241,11 +240,8 @@ useEffect(() => {
 {/* Footer */}
 <footer className="bg-[#003087] text-white py-4 mt-auto transition-all duration-500 hover:py-10 group">
   <div className="container mx-auto text-center text-sm">
-    {/* Always visible */}
     <p>© {new Date().getFullYear()} Faculty of Computer & Information - Assiut University</p>
-    
 
-    {/* Hidden until footer hover */}
     <div className="overflow-hidden max-h-0 opacity-0 transition-all duration-500 group-hover:max-h-40 group-hover:opacity-100 mt-3">
       <p className="mt-2">📍 Location: Assiut University, Egypt</p>
       <p>📞 Phone: (088) 347678</p>

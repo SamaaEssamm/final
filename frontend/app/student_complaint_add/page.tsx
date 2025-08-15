@@ -35,19 +35,15 @@ export default function NewComplaintPage() {
 const isMeaningfulText = (text: string) => {
   const cleaned = text.trim();
 
-  // لازم يكون فيه كلمتين على الأقل
+  
   const words = cleaned.split(/\s+/).filter(w => w.length > 0);
   if (words.length < 2) return false;
-
-  // رفض لو كله أرقام أو كله رموز
   if (/^[\d\s]+$/.test(cleaned)) return false;
   if (/^[^a-zA-Z\u0600-\u06FF0-9]+$/.test(cleaned)) return false;
 
-  // رفض لو نفس الكلمة متكررة
   const uniqueWords = new Set(words.map(w => w.toLowerCase()));
   if (uniqueWords.size < 2) return false;
 
-  // رفض لو أقل من ٥ حروف
   if (cleaned.length < 5) return false;
 
   return true;
@@ -80,7 +76,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   setErrors({ title: '', message: '' });
 
-  // باقي كود الإرسال بتاعك زي ما هو
+ 
   const student_email = localStorage.getItem('student_email');
   if (!student_email) {
     alert("User email not found. Please log in again.");
@@ -176,7 +172,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           <div>
 
            <div>
-  {/* اختيار القسم */}
+
   <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
   <select
     name="type"
@@ -190,7 +186,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     <option value="IT">IT</option>
   </select>
 
-  {/* الـ checkbox تحت القسم */}
+
   <div className="flex items-center space-x-2 mt-4">
     <input
       type="checkbox"
@@ -209,7 +205,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     </label>
   </div>
 
-  {/* الرسالة حسب الاختيار */}
+
   {formData.dep === 'public' && (
     <p className="text-sm text-green-600 mt-1">
       Note: Your name will NOT be displayed to protect your privacy.

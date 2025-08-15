@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // فوق مع الاستيرادات
+import { FaEye, FaEyeSlash } from "react-icons/fa"; 
 
 
 
@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false); // فوق مع الstates
+  const [showPassword, setShowPassword] = useState(false); 
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

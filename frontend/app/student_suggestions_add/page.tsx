@@ -31,14 +31,14 @@ export default function NewSuggestionPage() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // التحقق من الجملة
+   
     const isMeaningfulText = (text: string) => {
         text = text.trim();
 
-        if (text.split(/\s+/).length < 2) return false; // لازم كلمتين على الأقل
-        if (!/[a-zA-Z\u0600-\u06FF]/.test(text)) return false; // لازم فيه حروف عربية أو إنجليزية
-        if (/^[\d\W_]+$/.test(text)) return false; // ما يكونش كله أرقام أو رموز
-        if (text.length < 5) return false; // ما يكونش قصير جدًا
+        if (text.split(/\s+/).length < 2) return false; 
+        if (!/[a-zA-Z\u0600-\u06FF]/.test(text)) return false; 
+        if (/^[\d\W_]+$/.test(text)) return false; 
+        if (text.length < 5) return false; 
 
         return true;
     };
@@ -115,8 +115,7 @@ export default function NewSuggestionPage() {
             </button>
 
             <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl" encType="multipart/form-data">
-                
-                {/* Title */}
+ 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                     <input
@@ -130,7 +129,6 @@ export default function NewSuggestionPage() {
                     {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title}</p>}
                 </div>
 
-                {/* Message */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
                     <textarea
@@ -144,7 +142,6 @@ export default function NewSuggestionPage() {
                     {errors.message && <p className="text-sm text-red-600 mt-1">{errors.message}</p>}
                 </div>
 
-                {/* File */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Attachment (Optional)</label>
                     <input
@@ -155,7 +152,7 @@ export default function NewSuggestionPage() {
                     />
                 </div>
 
-                {/* Department + Show name */}
+               
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
                         <select
