@@ -4,13 +4,17 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from langchain.schema import Document
-import os
 import numpy as np
+from dotenv import load_dotenv
+import os
 
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+groq_key = os.getenv("GROQ_API_KEY")
+if not groq_key:
+    raise ValueError("GROQ_API_KEY is not set in .env!")
 
+os.environ["GROQ_API_KEY"] = groq_key
 
-# ========== SETUP ==========
-os.environ["GROQ_API_KEY"] = ""
 
 embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 

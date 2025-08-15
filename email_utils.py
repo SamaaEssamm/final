@@ -1,23 +1,29 @@
+import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # ← أهم حاجة في أول الملف
+
+EMAIL_USER = os.getenv("EMAIL_USER")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL_SERVER = os.getenv("EMAIL_SERVER", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
 
 def send_notification_email(to_email, subject, body):
-    sender_email = "projectcomplaints35@gmail.com"
-    app_password = ""  # ← حطي هنا الـ App Password من Gmail
-
     msg = MIMEMultipart()
-    msg["From"] = sender_email
+    msg["From"] = EMAIL_USER
     msg["To"] = to_email
     msg["Subject"] = subject
-
     msg.attach(MIMEText(body, "plain"))
 
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP(EMAIL_SERVER, EMAIL_PORT)
         server.starttls()
-        server.login(sender_email, app_password)
-        server.sendmail(sender_email, to_email, msg.as_string())
+        server.login(EMAIL_USER, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_USER, to_email, msg.as_string())
         server.quit()
         print("Email sent successfully.")
     except Exception as e:
