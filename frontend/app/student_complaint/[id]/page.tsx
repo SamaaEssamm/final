@@ -81,7 +81,11 @@ export default function StudentComplaintDetails() {
         <p><span className="font-semibold">Complaint code:</span> {complaint.reference_code}</p>
         <p><span className="font-semibold">Title:</span> {complaint.complaint_title}</p>
         <p><span className="font-semibold">Department:</span> {typeMap[complaint.complaint_type] || complaint.complaint_type}</p>
-        <p><span className="font-semibold">Type:</span> {complaint.complaint_dep}</p>
+        <p>
+        <span className="font-semibold">Name Display:</span>{' '}
+        {complaint.complaint_dep === "public" ? "Shown" : "Hidden"}
+      </p>
+
         <p>
           <span className="font-semibold">Date:</span>{' '}
           {complaint.complaint_created_at

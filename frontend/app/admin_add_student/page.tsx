@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; 
 
 
 export default function AdminAddStudentPage() {
@@ -13,6 +14,7 @@ export default function AdminAddStudentPage() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // فوق مع الstates
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,23 +87,29 @@ export default function AdminAddStudentPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 border rounded-lg text-sm"
-            placeholder="student@example.com"
+            placeholder="example@compit.aun.edu.eg"
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg text-sm"
-            placeholder="********"
-          />
-        </div>
+        <div className="mb-4 relative">
+  <label className="block mb-1 text-sm font-medium text-gray-700">
+    Password
+  </label>
+  <input
+    type={showPassword ? "text" : "password"} // 👈 هنا التبديل
+    required
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    className="w-full px-3 py-2 border rounded-lg text-sm pr-10" // pr-10 علشان مكان الأيقونة
+    placeholder="********"
+  />
+  <span
+    className="absolute right-3 top-9 cursor-pointer text-gray-500"
+    onClick={() => setShowPassword(!showPassword)}
+  >
+    {showPassword ? <FaEyeSlash /> : <FaEye />}
+  </span>
+</div>
 
         <button
           type="submit"

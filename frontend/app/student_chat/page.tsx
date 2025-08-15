@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useRef} from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-
+import { FaEllipsisV } from "react-icons/fa";
 type ChatMessage = {
   sender: 'user' | 'bot';
   text: string;
@@ -22,6 +22,12 @@ export default function StudentChatPage() {
   const [newMessage, setNewMessage] = useState('');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+const toggleMenu = (sessionId: string) => {
+  setOpenMenuId(prev => (prev === sessionId ? null : sessionId));
+};
+
 
   useEffect(() => {
     const email = localStorage.getItem('student_email');
@@ -52,6 +58,32 @@ export default function StudentChatPage() {
     })
     .catch(err => console.error("Failed to load sessions", err));
 }, [userEmail]);
+
+
+
+const handleRename = async (sessionId: string) => {
+  const newTitle = prompt("Enter new chat title:");
+  if (!newTitle) return;
+  await fetch(`http://localhost:5000/api/chat/rename_session`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ session_id: sessionId, title: newTitle }),
+  });
+  const updated = await fetch(`http://localhost:5000/api/chat/sessions?email=${userEmail}`).then(res => res.json());
+  setSessions(updated);
+};
+
+const handleDelete = async (sessionId: string) => {
+  if (!confirm("Are you sure you want to delete this chat?")) return;
+  await fetch(`http://localhost:5000/api/chat/delete_session`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ session_id: sessionId }),
+  });
+  const updated = await fetch(`http://localhost:5000/api/chat/sessions?email=${userEmail}`).then(res => res.json());
+  setSessions(updated);
+  if (selectedSession === sessionId) setSelectedSession(null);
+};
 
   // Fetch messages for selected session
   useEffect(() => {
@@ -132,20 +164,61 @@ export default function StudentChatPage() {
       + New Chat
     </button>
 
-    {Array.isArray(sessions) && sessions.map(session => (
+
+{Array.isArray(sessions) && sessions.map(session => (
+  <div
+    key={session.session_id}
+    className={`flex items-center justify-between mb-2 rounded-lg transition ${
+      selectedSession === session.session_id
+        ? 'bg-blue-200 font-semibold shadow'
+        : 'bg-white hover:bg-gray-200'
+    }`}
+  >
+    {/* العنوان */}
+    <button
+      onClick={() => setSelectedSession(session.session_id)}
+      className="flex-1 text-left py-2 px-3 truncate"
+      title={session.title}
+    >
+      {session.title}
+    </button>
+
+    <div className="relative">
+  <button
+    className="p-2 text-gray-500 hover:text-gray-700"
+    onClick={() => toggleMenu(session.session_id)}
+  >
+    <FaEllipsisV />
+  </button>
+
+  {openMenuId === session.session_id && (
+    <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
       <button
-        key={session.session_id}
-        onClick={() => setSelectedSession(session.session_id)}
-        className={`block w-full text-left py-2 px-3 rounded-lg mb-2 truncate transition ${
-          selectedSession === session.session_id
-            ? 'bg-blue-200 font-semibold shadow'
-            : 'bg-white hover:bg-gray-200'
-        }`}
-        title={session.title}
+        onClick={() => {
+          handleRename(session.session_id);
+          setOpenMenuId(null);
+        }}
+        className="w-full text-left px-4 py-2 hover:bg-gray-100"
       >
-        {session.title}
+        Rename
       </button>
-    ))}
+      <button
+        onClick={() => {
+          handleDelete(session.session_id);
+          setOpenMenuId(null);
+        }}
+        className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+      >
+        Delete
+      </button>
+    </div>
+  )}
+</div>
+
+    </div>
+
+))}
+
   </div>
 
   {/* Chat Area */}

@@ -13,6 +13,11 @@ export default function NewComplaintPage() {
     type: 'academic',
     dep: 'public',
   });
+  const [errors, setErrors] = useState({
+  title: '',
+  message: ''
+});
+
     useEffect(() => {
     const email = localStorage.getItem('student_email');
   if (!email) {
@@ -27,6 +32,26 @@ export default function NewComplaintPage() {
   }
   }, [router]);
 
+const isMeaningfulText = (text: string) => {
+  const cleaned = text.trim();
+
+  // لازم يكون فيه كلمتين على الأقل
+  const words = cleaned.split(/\s+/).filter(w => w.length > 0);
+  if (words.length < 2) return false;
+
+  // رفض لو كله أرقام أو كله رموز
+  if (/^[\d\s]+$/.test(cleaned)) return false;
+  if (/^[^a-zA-Z\u0600-\u06FF0-9]+$/.test(cleaned)) return false;
+
+  // رفض لو نفس الكلمة متكررة
+  const uniqueWords = new Set(words.map(w => w.toLowerCase()));
+  if (uniqueWords.size < 2) return false;
+
+  // رفض لو أقل من ٥ حروف
+  if (cleaned.length < 5) return false;
+
+  return true;
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -36,45 +61,61 @@ export default function NewComplaintPage() {
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
+  let newErrors = { title: '', message: '' };
+  let hasError = false;
+
+  if (!isMeaningfulText(formData.title)) {
+    newErrors.title = "Please enter a meaningful title in Arabic or English (at least two words).";
+    hasError = true;
+  }
+  if (!isMeaningfulText(formData.message)) {
+    newErrors.message = "Please enter a meaningful message in Arabic or English (at least two words).";
+    hasError = true;
+  }
+
+  if (hasError) {
+    setErrors(newErrors);
+    return;
+  }
+
+  setErrors({ title: '', message: '' });
+
+  // باقي كود الإرسال بتاعك زي ما هو
   const student_email = localStorage.getItem('student_email');
-    if (!student_email) {
+  if (!student_email) {
     alert("User email not found. Please log in again.");
     return;
   }
 
   try {
-            //const file = fileInputRef.current?.files?.[0] || null;
-            const data = new FormData();
-            data.append('student_email', student_email);
-            data.append('complaint_title', formData.title);
-            data.append('complaint_message', formData.message);
-            data.append('complaint_type', formData.type);
-            data.append('complaint_dep', formData.dep);
+    const data = new FormData();
+    data.append('student_email', student_email);
+    data.append('complaint_title', formData.title);
+    data.append('complaint_message', formData.message);
+    data.append('complaint_type', formData.type);
+    data.append('complaint_dep', formData.dep);
 
-            if (file) {
-                data.append('file', file); // ده الفايل اللي هيترفع
-            }
+    if (file) {
+      data.append('file', file);
+    }
 
-            const res = await fetch('http://127.0.0.1:5000/api/student/addcomplaint', {
-                method: 'POST',
-                body: data,
-            });
+    const res = await fetch('http://127.0.0.1:5000/api/student/addcomplaint', {
+      method: 'POST',
+      body: data,
+    });
 
-  if (res.ok) {
-    router.push('/student_complaint');
-  } else {
-    const errorText = await res.text();
-    alert('Error: ' + errorText);
-  }
-}
-   catch (error) {
-
+    if (res.ok) {
+      router.push('/student_complaint');
+    } else {
+      const errorText = await res.text();
+      alert('Error: ' + errorText);
+    }
+  } catch (error) {
     console.error("Error submitting complaint:", error);
     alert("Something went wrong. Please try again later.");
   }
 };
 
- 
 
   return (
     <main className="bg-white min-h-screen py-10 px-6 md:px-12 lg:px-24">
@@ -92,28 +133,34 @@ const handleSubmit = async (e: React.FormEvent) => {
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#003087]"
-          />
-        </div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+  <input
+    type="text"
+    name="title"
+    value={formData.title}
+    onChange={handleChange}
+    required
+    className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#003087]"
+  />
+  {errors.title && (
+    <p className="text-sm text-red-600 mt-1">{errors.title}</p>
+  )}
+</div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-          <textarea
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            rows={5}
-            required
-            className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#003087]"
-          />
-        </div>
+       <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+  <textarea
+    name="message"
+    value={formData.message}
+    onChange={handleChange}
+    rows={5}
+    required
+    className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#003087]"
+  />
+  {errors.message && (
+    <p className="text-sm text-red-600 mt-1">{errors.message}</p>
+  )}
+</div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Attachment (optional)</label>
         <input
@@ -125,53 +172,60 @@ const handleSubmit = async (e: React.FormEvent) => {
         />
       </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
           <div>
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+           <div>
+  {/* اختيار القسم */}
+  <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+  <select
+    name="type"
+    value={formData.type}
+    onChange={handleChange}
+    className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#003087]"
+  >
+    <option value="academic">Academic</option>
+    <option value="activities">Activities</option>
+    <option value="administrative">Administrative</option>
+    <option value="IT">IT</option>
+  </select>
 
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#003087]"
-            >
-              <option value="academic">Academic</option>
-              <option value="activities">Activities</option>
-              <option value="administrative">Administrative</option>
-              <option value="IT">IT</option>
-            </select>
+  {/* الـ checkbox تحت القسم */}
+  <div className="flex items-center space-x-2 mt-4">
+    <input
+      type="checkbox"
+      id="showName"
+      checked={formData.dep === 'private'}
+      onChange={(e) =>
+        setFormData((prev) => ({
+          ...prev,
+          dep: e.target.checked ? 'private' : 'public',
+        }))
+      }
+      className="h-4 w-4 text-[#003087] focus:ring-[#003087] border-gray-300 rounded"
+    />
+    <label htmlFor="showName" className="text-sm text-gray-700">
+      Show my name
+    </label>
+  </div>
+
+  {/* الرسالة حسب الاختيار */}
+  {formData.dep === 'public' && (
+    <p className="text-sm text-green-600 mt-1">
+      Note: Your name will NOT be displayed to protect your privacy.
+    </p>
+  )}
+  {formData.dep === 'private' && (
+    <p className="text-sm text-red-600 mt-1">
+      Note: Your name will be displayed with the complaint.
+    </p>
+  )}
+</div>
+
+ 
+
           </div>
-
-          <div>
-
-
-            <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-
-            <select
-              name="dep"
-              value={formData.dep}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#003087]"
-            >
-              <option value="public">Public</option>
-              <option value="private">Private</option>
-            </select>
-
-
-            {formData.dep === 'public' && (
-  <p className="text-sm text-green-600 mt-1">
-    Note: Since the complaint is "Public", your name will NOT be displayed to protect your privacy.
-  </p>
-)}
-            {formData.dep === 'private' && (
-              <p className="text-sm text-red-600 mt-1">
-                Note: Since the complaint is "Private", your name will be displayed with the complaint.
-              </p>
-            )}
-
-          </div>
-        </div>
+        
 
         <button
           type="submit"

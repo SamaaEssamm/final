@@ -18,7 +18,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 app = Flask(__name__, static_folder='static')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ghada:ghada@localhost:5432/complaint_app'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://sama:1234@localhost:5432/complaints_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -72,7 +72,7 @@ api.add_resource(Users, '/api/addusers/')
 @app.route("/")
 def home():
     return '<h1>HI</h1>'
-
+import re
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -83,13 +83,30 @@ def login():
     if not email or not password:
         return jsonify({"message": "Email and password are required"}), 400
 
+    # نجيب المستخدم من الداتا بيز
     user = UserModel.query.filter_by(users_email=email).first()
 
-    if user and check_password_hash(user.users_password, password):
-        return jsonify({"message": "Login successful", "role": user.users_role.name}), 200
-    else:
+    # لو مفيش مستخدم أو الباسورد غلط
+    if not user or not check_password_hash(user.users_password, password):
         return jsonify({"message": "Invalid email or password"}), 401
-    
+
+    # لو الدور طالب → لازم يكون الإيميل أكاديمي
+    if user.users_role.name.lower() == "student":
+        if not email.lower().endswith("@compit.aun.edu.eg"):
+            return jsonify({"message": "Students must use their academic email ending with @compit.aun.edu.eg"}), 400
+
+    # التحقق من قوة الباسورد
+    if len(password) < 6:
+        return jsonify({"message": "Password must be at least 6 characters long"}), 400
+
+    if not re.search(r"[A-Za-z]", password) or not re.search(r"[0-9]", password):
+        return jsonify({"message": "Password must contain both letters and numbers"}), 400
+
+    return jsonify({
+        "message": "Login successful",
+        "role": user.users_role.name
+    }), 200  
+
 @app.route('/api/student/<email>', methods=['GET'])
 def get_student_by_email(email):
     student = UserModel.query.filter_by(users_email=email).first()
@@ -344,9 +361,21 @@ def add_student():
     email = data.get('users_email')
     password = data.get('users_password')
 
+    # تحقق من الحقول المطلوبة
     if not all([name, email, password]):
         return jsonify({'status': 'fail', 'message': 'Missing fields'}), 400
 
+    # تحقق من الإيميل الأكاديمي
+    if not email.lower().endswith("@compit.aun.edu.eg"):
+        return jsonify({'status': 'fail', 'message': 'Email must end with @compit.aun.edu.eg'}), 400
+
+    # تحقق من قوة الباسورد
+    if len(password) < 6:
+        return jsonify({'status': 'fail', 'message': 'Password must be at least 6 characters long'}), 400
+    if not re.search(r"[A-Za-z]", password) or not re.search(r"[0-9]", password):
+        return jsonify({'status': 'fail', 'message': 'Password must contain both letters and numbers'}), 400
+
+    # تحقق من وجود المستخدم
     existing_user = UserModel.query.filter_by(users_email=email).first()
     if existing_user:
         return jsonify({'status': 'fail', 'message': 'Email already exists'}), 409
@@ -356,7 +385,7 @@ def add_student():
     new_student = UserModel(
         users_name=name,
         users_email=email,
-        users_password=hashed_password,  # Consider hashing passwords!
+        users_password=hashed_password,
         users_role='student'
     )
 
@@ -364,6 +393,7 @@ def add_student():
     db.session.commit()
 
     return jsonify({'status': 'success', 'message': 'Student added successfully'})
+
 
 @app.route('/api/admin/update_student', methods=['PUT'])
 def update_student():
@@ -377,12 +407,25 @@ def update_student():
     if not student:
         return jsonify({'status': 'fail', 'message': 'Student not found'}), 404
 
+    # تحديث الاسم
     if new_name:
         student.users_name = new_name
+
+    # تحديث الباسورد مع التحقق
     if new_password:
-        hashed_password = hashed_password = generate_password_hash(new_password)
-        student.users_password = hashed_password
+        if len(new_password) < 6:
+            return jsonify({'status': 'fail', 'message': 'Password must be at least 6 characters long'}), 400
+        if not re.search(r"[A-Za-z]", new_password) or not re.search(r"[0-9]", new_password):
+            return jsonify({'status': 'fail', 'message': 'Password must contain both letters and numbers'}), 400
+        student.users_password = generate_password_hash(new_password)
+
+    # تحديث الإيميل الأكاديمي
     if new_email:
+        if not new_email.lower().endswith("@compit.aun.edu.eg"):
+            return jsonify({'status': 'fail', 'message': 'Email must end with @compit.aun.edu.eg'}), 400
+        existing_user = UserModel.query.filter_by(users_email=new_email).first()
+        if existing_user and existing_user != student:
+            return jsonify({'status': 'fail', 'message': 'Email already exists'}), 409
         student.users_email = new_email
 
     db.session.commit()
@@ -642,7 +685,6 @@ def get_admin_id():
     else:
         return jsonify({'status': 'fail', 'reason': 'Admin not found'})
 
-
 @app.route('/api/admin/notifications', methods=['GET'])
 def get_admin_notifications():
     email = request.args.get("admin_email")
@@ -650,14 +692,51 @@ def get_admin_notifications():
     if not admin:
         return jsonify([])
 
-    notifications = NotificationModel.query.filter_by(user_id=admin.users_id).order_by(NotificationModel.notification_created_at.desc()).all()
+    # --- إضافة أوتوماتيك للإشعارات الناقصة ---
+    complaints = ComplaintModel.query.filter(ComplaintModel.complaint_created_at >= admin.users_created_at).all()
+    suggestions = SuggestionModel.query.filter(SuggestionModel.suggestion_created_at >= admin.users_created_at).all()
+
+    # إضافة إشعارات للشكاوى (بنفس صيغة الرسالة المستخدمة عند إنشاء الشكوى)
+    for comp in complaints:
+        exists = NotificationModel.query.filter_by(
+            user_id=admin.users_id,
+            complaint_id=comp.complaint_id
+        ).first()
+        if not exists:
+            db.session.add(NotificationModel(
+                user_id=admin.users_id,
+                complaint_id=comp.complaint_id,
+                notifications_message="New complaint has been received.",  # نفس الرسالة المستخدمة عند الإنشاء
+                notification_created_at=comp.complaint_created_at
+            ))
+
+    # إضافة إشعارات للاقتراحات
+    for sugg in suggestions:
+        exists = NotificationModel.query.filter_by(
+            user_id=admin.users_id,
+            suggestion_id=sugg.suggestion_id
+        ).first()
+        if not exists:
+            db.session.add(NotificationModel(
+                user_id=admin.users_id,
+                suggestion_id=sugg.suggestion_id,
+                notifications_message=f"New suggestion has been recieved. ",
+                notification_created_at=sugg.suggestion_created_at
+            ))
+
+    db.session.commit()
+    # ------------------------------------------
+
+    notifications = NotificationModel.query.filter_by(user_id=admin.users_id).order_by(
+        NotificationModel.notification_created_at.desc()
+    ).all()
 
     return jsonify([
         {
             "id": str(n.notification_id),
             "message": n.notifications_message,
             "is_read": n.notification_is_read,
-            "created_at": n.notification_created_at.isoformat(),
+            "created_at": n.notification_created_at.isoformat() if n.notification_created_at else None,
             "complaint_id": str(n.complaint_id) if n.complaint_id else None,
             "suggestion_id": str(n.suggestion_id) if n.suggestion_id else None
         }
@@ -913,6 +992,50 @@ def get_chat_sessions():
         }
         for s in sessions
     ])
+
+@app.route("/api/chat/rename_session", methods=["PUT"])
+def rename_session():
+    data = request.get_json()
+    session_id = data.get("session_id")
+    new_title = (data.get("title") or "").strip()
+
+    if not session_id or not new_title:
+        return jsonify({"error": "Missing session_id or title"}), 400
+
+    if len(new_title) > 255:
+        return jsonify({"error": "Title too long"}), 400
+
+    session = ChatSessionModel.query.get(session_id)
+    if not session:
+        return jsonify({"error": "Session not found"}), 404
+
+    session.session_title = new_title
+    db.session.commit()
+
+    return jsonify({
+        "message": "Session renamed successfully",
+        "session_id": session_id,
+        "new_title": new_title
+    })
+
+
+@app.route("/api/chat/delete_session", methods=["DELETE"])
+def delete_session():
+    data = request.get_json()
+    session_id = data.get("session_id")
+
+    if not session_id:
+        return jsonify({"error": "Missing session_id"}), 400
+
+    session = ChatSessionModel.query.filter_by(sessions_id=session_id).first()
+    if not session:
+        return jsonify({"error": "Session not found"}), 404
+
+    db.session.delete(session)
+    db.session.commit()
+    return jsonify({"message": "Session deleted successfully"})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

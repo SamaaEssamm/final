@@ -110,7 +110,7 @@ const departmentLabels: { [key: string]: string } = {
       <h1 className="text-3xl font-bold text-[#003087] mb-8">Manage Complaints</h1>
 
       <button
-  onClick={() => router.push('/student_dashboard')}
+  onClick={() => router.push('/admin_dashboard')}
   title="Back"
   className="fixed bottom-6 left-6 rounded-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
 >

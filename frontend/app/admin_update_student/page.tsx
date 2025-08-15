@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
 import { useRouter } from 'next/navigation';
+import { FaArrowLeft,  FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
 export default function UpdateStudentPage() {
   const [oldEmail, setOldEmail] = useState('');
   const [newName, setNewName] = useState('');
@@ -10,6 +10,8 @@ export default function UpdateStudentPage() {
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+
 
 
   const handleUpdate = async () => {
@@ -89,14 +91,21 @@ if (role !== "admin") return;
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
           />
 
-          <input
-            type="password"
-            placeholder="New Password (optional)"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
-          />
-
+          <div className="relative">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="New Password (optional)"
+    value={newPassword}
+    onChange={(e) => setNewPassword(e.target.value)}
+    className="w-full px-4 py-2 pr-10 rounded-lg border border-gray-300 focus:outline-none"
+  />
+  <span
+    className="absolute right-3 top-3 cursor-pointer text-gray-500"
+    onClick={() => setShowPassword(!showPassword)}
+  >
+    {showPassword ? <FaEyeSlash /> : <FaEye />}
+  </span>
+</div>
           <button
             onClick={handleUpdate}
             className="w-full bg-[#003087] text-white py-2 rounded-lg hover:bg-[#002060] transition"

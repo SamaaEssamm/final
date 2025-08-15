@@ -70,7 +70,10 @@ export default function SuggestionDetailsPage() {
         <p><span className="font-semibold">Suggestion code:</span> {suggestion.reference_code}</p>
         <p><span className="font-semibold">Title:</span> {suggestion.suggestion_title}</p>
         <p><span className="font-semibold">Department:</span> {suggestion.suggestion_type}</p>
-        <p><span className="font-semibold">Type:</span> {suggestion.suggestion_dep}</p>
+        <p> <span className="font-semibold">Name Display:</span>{' '}
+        {suggestion.suggestion_dep === "public" ? "Shown" : "Hidden"}
+      </p>
+
 
         <p>
           <span className="font-semibold">Date:</span>{' '}

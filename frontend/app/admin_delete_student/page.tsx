@@ -65,7 +65,7 @@ export default function DeleteStudentPage() {
         </div>
 
          <button
-  onClick={() => router.push('/student_manage_students')}
+  onClick={() => router.push('/admin_manage_students')}
   title="Back"
   className="fixed bottom-6 left-6 rounded-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
 >

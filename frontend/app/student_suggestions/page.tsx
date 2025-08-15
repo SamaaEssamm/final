@@ -95,8 +95,8 @@ export default function SuggestionsPage() {
                         {/* العمود الجديد: suggestion code */}
                         <th className="px-4 py-3 font-medium text-gray-700">Suggestion Code</th>
                         <th className="px-4 py-3 font-medium text-gray-700">Title</th>
-                        <th className="px-4 py-3 font-medium text-gray-700">Type</th>
                         <th className="px-4 py-3 font-medium text-gray-700">Department</th>
+                        <th className="px-4 py-3 font-medium text-gray-700">Name Display</th>
                         <th className="px-4 py-3 font-medium text-gray-700">Date</th>
                     </tr>
                     </thead>
@@ -112,7 +112,9 @@ export default function SuggestionsPage() {
       <td className="px-4 py-2">{s.reference_code}</td>
       <td className="px-4 py-2">{s.suggestion_title}</td>
       <td className="px-4 py-2 capitalize">{s.suggestion_type}</td>
-      <td className="px-4 py-2 capitalize">{s.suggestion_dep}</td>
+      <td className="px-4 py-2 capitalize">
+        {s.suggestion_dep === "public" ? "Hidden" : "Shown"}
+      </td>
       <td className="px-4 py-2">
         {new Date(s.suggestion_created_at).toLocaleDateString()}
       </td>

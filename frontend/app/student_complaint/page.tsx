@@ -128,8 +128,8 @@ export default function ComplaintsPage() {
               <tr>
                 <th className="px-4 py-3 font-medium text-gray-700">complaint Code</th>
                 <th className="px-4 py-3 font-medium text-gray-700">Title</th>
-                <th className="px-4 py-3 font-medium text-gray-700">Type</th>
                 <th className="px-4 py-3 font-medium text-gray-700">Department</th>
+                <th className="px-4 py-3 font-medium text-gray-700">Name Display</th>
                 <th className="px-4 py-3 font-medium text-gray-700">Date</th>
                 <th className="px-4 py-3 font-medium text-gray-700">Status</th>
               </tr>
@@ -143,8 +143,10 @@ export default function ComplaintsPage() {
                 >
                   <td className="px-4 py-2">{c.reference_code}</td>
                   <td className="px-4 py-2">{c.complaint_title}</td>
-                  <td className="px-4 py-2 capitalize">{c.complaint_dep}</td>
                   <td className="px-4 py-2 capitalize">{c.complaint_type}</td>
+                  <td className="px-4 py-2 capitalize">
+        {c.complaint_dep === "public" ? "Hidden" : "Shown"}
+      </td>
                   <td className="px-4 py-2">{formatDate(c.complaint_created_at)}</td>
                   <td className="px-4 py-2 capitalize">
                     {statusMap[c.complaint_status] ? (
