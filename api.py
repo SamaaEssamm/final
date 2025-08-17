@@ -11,7 +11,7 @@ import uuid
 import base64
 from models import db, UserRole, ComplaintStatus, SessionStatus, SenderType, ComplaintType, ComplaintDep, SuggestionStatus
 from models import NotificationModel, ComplaintModel, SuggestionModel, ChatMessageModel, ChatSessionModel, UserModel
-from chatbot_api import ask_question_with_rerank
+from chatbot_Gem import ask_rule_question
 from email_utils import send_notification_email
 from dotenv import load_dotenv
 import re
@@ -817,7 +817,7 @@ def ask():
         else:
             return jsonify({"error": "No active chat session found"}), 404
 
-    answer = ask_question_with_rerank(question)
+    answer = ask_rule_question(question)
     question_msg = ChatMessageModel(
         session_id=session_id,
         sender='user',

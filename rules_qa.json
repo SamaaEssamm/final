@@ -1,0 +1,702 @@
+[
+  {
+    "question": "What are the scientific fields included in the Information Systems Department?",
+    "answer": "Information Systems Analysis and Design - Information Systems Evolution methodologies - architecture Information - Information Storage and Recover Systems - Database Systems - Information Systems - Administrative Information Systems - Geographical information - multimedia information systems - Distributed information systems - smart information systems - Discovering knowledge in rules system - Data - Databases - Information Systems Economics - Excavation in Data - data warehouses - information centers management - integrated information systems - methodology of information systems development - confirmation of software quality and information systems - information systems applications in various fields - network information systems.",
+    "context": "Information Systems Department"
+  },
+  {
+    "question": "What is the focus of the Information Technology Department?",
+    "answer": "Computer networks of all kinds - information networks and applications - Communications Technology - Internet Technology - Insurance and Confidential Information and Networks - Digital Signals Processing - Real Time Systems - Digital Systems - Computer Building - Micro Pronouns and Applications - Camping Systems - Smart Computer and Complete Computers - Computer Systems with Possible Certains - Distributed and Parallel Computer Systems - Dynamic Systems and Automated Human - E learning and digital libraries - e b",
+    "context": "Information Technology Department"
+  },
+  {
+    "question": "What is the topic of 'Data Pressure'?",
+    "answer": "Not found",
+    "context": "uages concepts and translations - data structures - analysis and design of algorithms - computers operating systems - environment and organization of computers - data encryption and computer security - data pressure - software engineering - artificial intelligence - smart systems - expert systems - image processing - natural languages processing - multiple agents systems - knowledge rules systems - processing on parallel Distributed -"
+  },
+  {
+    "question": "What is the topic of 'Computer Vision'?",
+    "answer": "Computer Vision",
+    "context": "Computer Teaching - Identification of Models - Human Communication Methods - Computer Vision - Computer Drawing Systems - Calculate Computers."
+  },
+  {
+    "question": "What is the topic of 'Data Encryption'?",
+    "answer": "data encryption and computer security",
+    "context": "uages concepts and translations - data structures - analysis and design of algorithms - computers operating systems - environment and organization of computers - data encryption and computer security - data pressure - software engineering - artificial intelligence - smart systems - expert systems - image processing - natural languages processing - multiple agents systems - knowledge rules systems - processing on parallel Distributed -"
+  },
+  {
+    "question": "What is the credit value of IT371?",
+    "answer": "3",
+    "context": "IT371 – Web Programming | Credits: 3 | Prerequisites: CS141, IT251"
+  },
+  {
+    "question": "What is the prerequisite for HUM112?",
+    "answer": "HUM111",
+    "context": "HUM112 English Language II | Credits: 2 | Prerequisites: HUM111"
+  },
+  {
+    "question": "What is the topic of HUM121?",
+    "answer": "computing's social context, including IT's impact on society",
+    "context": "HUM121 Social Context of Computing | Credits: 1 | Prerequisites: None | Covers computing’s social context, including IT’s impact on society;"
+  },
+  {
+    "question": "What is the topic of HUM131?",
+    "answer": "organizational behavior",
+    "context": "HUM131 Organizational Behavior | Credits: 2 | Prerequisites: None | Covers perception, learning, motivation, and values;"
+  },
+  {
+    "question": "What is the topic of HUM122?",
+    "answer": "intellectual property",
+    "context": "HUM122 Intellectual Property | Credits: 1 | Prerequisites: None | Introduces foundations of intellectual property including ownership of information;"
+  },
+  {
+    "question": "What skills will I learn in Hum132?",
+    "answer": "Writing skills, report writing, and oral presentation skills. Good diction and extempore speaking in the appropriate context will be key skills in this course.",
+    "context": "Hum132 – Interpersonal Communication & Personal Communication | Credits: 2 Hours | Prerequisites: None | Writing skills, report writing, and oral presentation skills. Good diction and extempore speaking in the appropriate context will be key skills in this course."
+  },
+  {
+    "question": "What topics will be covered in Hum133?",
+    "answer": "Monopolies and their economic implications; Effect of skilled labor supply and demand on the quality of computing products; Pricing strategies in the computing domain; Cost-benefit analysis and break-even analysis; Return on investment; analysis of options; Time value of money; money management; Economic analysis; accounting for risk; Differences in access to computing resources and their possible effects.",
+    "context": "Hum133 – Computing Economic | Credits:2 Hours | Prerequisites:None | Monopolies and their economic implications; Effect of skilled labor supply and demand on the quality of computing products; Pricing strategies in the computing domain; Cost-benefit analysis and break-even analysis; Return on investment; analysis of options; Time value of money; money management; Economic analysis; accounting for risk; Differences in access to computing resources and their possible effects."
+  },
+  {
+    "question": "What is the focus of Hum141?",
+    "answer": "History and examples of computer crime — “cracking” (hacking) and its effects; Viruses, worms, and Trojan horses; Crime prevention strategies; System use policies and monitoring; Risks and liabilities of computer-based systems — accountability, responsibility, liability.",
+    "context": "Hum141 – Computer Law | Credits: 2 Hours | Prerequisites: None | History and examples of computer crime — “cracking” (hacking) and its effects; Viruses, worms, and Trojan horses; Crime prevention strategies; System use policies and monitoring; Risks and liabilities of computer-based systems — accountability, responsibility, liability."
+  },
+  {
+    "question": "What will I learn in Hum151?",
+    "answer": "Introduction and properties; Gestalt theory and gestural drawing; Blind contour drawing; Using light and dark; Discovering mass drawing; Using negative space to create atmosphere and shape; Exploring different mediums and paper; Conclusion and final portfolio drawing.",
+    "context": "Hum151 – Hand Drawing | Credits:2 Hours| Prerequisites: None | Introduction and properties; Gestalt theory and gestural drawing; Blind contour drawing; Using light and dark; Discovering mass drawing; Using negative space to create atmosphere and shape; Exploring different mediums and paper; Conclusion and final portfolio drawing."
+  },
+  {
+    "question": "What will I learn in HUM231?",
+    "answer": "Management concepts, levels",
+    "context": "HUM231 Business Administration | Credits: 3 | Prerequisites: None | Management concepts, levels"
+  },
+  {
+    "question": "What is the course HUM232 about?",
+    "answer": "Covers general principles of effective writing, design and usability, the documentation development process, writing procedures, language considerations, obstacles to readability, report writing, and best practices in technical writing.",
+    "context": "HUM232 Technical Writing | Credits: 2 | Prerequisites: HUM111"
+  },
+  {
+    "question": "What is the topic of the course Math101 Mathematics I?",
+    "answer": "Covers Pre-Calculus review (sets and functions; limits and continuity); derivatives (techniques of differentiation; derivatives of basic and fundamental functions; implicit differentiation; linear approximation and differentials; extrema and optimization; velocity and acceleration); integrals (indefinite integrals; change of variables; definite integrals; Fundamental Theorem of Calculus); techniques of integration (integration by parts; trigonometric integrals and substitutions; integrals of rational functions); numerical integration; and applications of definite integrals.",
+    "context": "Math101 Mathematics I | Credits: 3 | Prerequisites: None"
+  },
+  {
+    "question": "What is the course HUM241 about?",
+    "answer": "Covers community values and the laws by which we live; the nature of professionalism in computing; various forms of professional credentialing and their advantages and disadvantages; the role of the computing professional in public policy; maintaining awareness of consequences; ethical dissent and whistle-blowing; codes of ethics, conduct, and practice (IEEE, ACM, SE, AITP, etc.); dealing with harassment and discrimination; and “acceptable use” policies for computing in the workplace.",
+    "context": "Hum241 Computers and Ethics  | Credits: 2  | Prerequisites: None"
+  },
+  {
+    "question": "Do I need to take Math101 before taking Math101 Mathematics II?",
+    "answer": "Yes, Math101 is a prerequisite for Math101 Mathematics II.",
+    "context": "Math101 Mathematics II | Credits: 3 | Prerequisites: Math101"
+  },
+  {
+    "question": "What is the topic of the course Math101 Mathematics II?",
+    "answer": "Covers partial fractions; infinite series (sequences, convergence and divergence, positive-term series, convergence tests, alternati",
+    "context": "Math101 Mathematics II | Credits: 3 | Prerequisites: Math101"
+  },
+  {
+    "question": "What topics are covered in MATH201?",
+    "answer": "Laplace and inverse Laplace transforms; Fourier series (including complex forms), Fourier integrals, cosine and sine transforms, and the full Fourier transform; discrete and fast Fourier transforms; Z-transform and inverse Z-transform; discrete-time systems and difference equations; discrete linear systems; wavelet transforms; and applications in engineering and signal processing.",
+    "context": "MATH201 Mathematics III | Credits: 3 | Prerequisites: MATH102 | Covers Laplace and inverse Laplace transforms; Fourier series (including complex forms), Fourier integrals, cosine and sine transforms, and the full Fourier transform; discrete and fast Fourier transforms; Z-transform and inverse Z-transform; discrete-time systems and difference equations; discrete linear systems; wavelet transforms; and applications in engineering and signal processing."
+  },
+  {
+    "question": "What is the prerequisite for MATH202?",
+    "answer": "MATH102",
+    "context": "MATH202 Probability and Statistics | Credits: 2 | Prerequisites: MATH102"
+  },
+  {
+    "question": "What topics are covered in MATH301?",
+    "answer": "numerical computing and the role of computers in solving mathematical problems; solving nonlinear and linear systems of equations; interpolation and curve fitting; function approximation; finite differences; numerical differentiation and integration; numerical solutions of ordinary differential equations (ODEs); boundary-value problems; and sample applications using software tools such as MATLAB or Python.",
+    "context": "MATH301 Numerical Analysis | Credits: 3 | Prerequisites: MATH102 | Covers numerical computing and the role of computers in solving mathematical problems; solving nonlinear and linear systems of equations; interpolation and curve fitting; function approximation; finite differences; numerical differentiation and integration; numerical solutions of ordinary differential equations (ODEs); boundary-value problems; and sample applications using software tools such as MATLAB or Python."
+  },
+  {
+    "question": "What is the prerequisite for CS201?",
+    "answer": "MATH102",
+    "context": "CS201 Discrete Structures | Credits: 3 | Prerequisites: MATH102"
+  },
+  {
+    "question": "What topics are covered in MATH102?",
+    "answer": "Not mentioned in the provided text",
+    "context": "None"
+  },
+  {
+    "question": "What is the prerequisite for CS301?",
+    "answer": "CS201",
+    "context": "CS301 - Operation Research | 3 Hours | Prerequisites: CS201 |"
+  },
+  {
+    "question": "What is the topic of CS302?",
+    "answer": "Modeling and Simulation",
+    "context": "CS302 – Modeling and Simulation – 3 Hours – Prerequisites: MATH202"
+  },
+  {
+    "question": "What is the purpose of simulation and modeling?",
+    "answer": "Including benefits and limitations",
+    "context": "Definition of simulation and modeling: Purpose including benefits and limitations"
+  },
+  {
+    "question": "What are some application areas of simulation and modeling?",
+    "answer": "healthcare; economics and finance; classroom of the future; training and education; city and urban simulations; simulation in science and in engineering; games; military simulation",
+    "context": "Important application areas: healthcare; economics and finance; classroom of the future; training and education; city and urban simulations; simulation in science and in engineering; games; military simulation"
+  },
+  {
+    "question": "What is the topic of the Simplex method?",
+    "answer": "Linear programming",
+    "context": "CS301 - Operation Research | 3 Hours | Prerequisites: CS201 | Linear programming: The Simplex method"
+  },
+  {
+    "question": "What are the prerequisites for PHY101?",
+    "answer": "_",
+    "context": "PHY101 – Physics I – 3 Hours – Prerequisites: _ – Mechanics: Physics and measurements; Motion in one dimension; Vectors; Motion in two dimensions; Laws of motion; Circular motion and its applications; Work and energy; Potential energy and conservation of energy; Linear momentum and collision; Rotation of a rigid body; Rolling motion; Law of gravity – Waves: Oscillatory motion; Wave motion; Sound waves."
+  },
+  {
+    "question": "What topics are covered in EE101?",
+    "answer": "Electrical circuit laws and theorems: Ohm’s, Kirchhoff’s, mesh, nodal, Thevenin’s, maximum power transfer theorems for both DC and AC circuits; R, L, C elements – Electronic components and circuits: diodes; bipolar junction transistors; field effect transistors and use of transistors in amplifiers – OP-Amp – Digital circuits: physical design of simple gates; flip-flops and memory circuits.",
+    "context": "EE101 – Electronics – 3 Hours – Prerequisites: _ – Electrical circuit laws and theorems: Ohm’s, Kirchhoff’s, mesh, nodal, Thevenin’s, maximum power transfer theorems for both DC and AC circuits; R, L, C elements – Electronic components and circuits: diodes; bipolar junction transistors; field effect transistors and use of transistors in amplifiers – OP-Amp – Digital circuits: physical design of simple gates; flip-flops and memory circuits."
+  },
+  {
+    "question": "What is the prerequisite for EE201?",
+    "answer": "MATH201",
+    "context": "EE201 – Digital Signal Processing – 3 Hours – Prerequisites: MATH201 – Digital p"
+  },
+  {
+    "question": "What topics are covered in PHY102?",
+    "answer": "Physical optics: Interference, diffraction and polarization – Magnetic fields: Definitions and properties; Sources of magnetic fields; Electromagnetic waves; The four Maxwell’s equations – Selected topics: Introduction to modern physics and applications; Molecules and solids; Semiconductors and semiconductor devices; Superconductivity.",
+    "context": "PHY102 – Physics II – 3 Hours – Prerequisites: _ – Physical optics: Interference, diffraction and polarization – Magnetic fields: Definitions and properties; Sources of magnetic fields; Electromagnetic waves; The four Maxwell’s equations – Selected topics: Introduction to modern physics and applications; Molecules and solids; Semiconductors and semiconductor devices; Superconductivity."
+  },
+  {
+    "question": "What topics are covered in EE102?",
+    "answer": "Numbering systems, logic functions and logic gates, Boolean algebra – Combinational circuits: Simplification of logic circuits using Karnaugh maps and tabulation method; Gate level design; Adders, subtractors, encoders and decoders; Multiplexers and demultiplexers; MSI Design; Programmable devices (ROM, PAL, PLA, ...) – Sequential circuits: Flip-flops, latches, analysis and design of simple sequential circuits; State tables and state diagrams; Counters, registers, RAMs – Integrated circuits and logic families.",
+    "context": "EE102 – Digital Circuits – 2 Hours – Prerequisites: _ – Numbering systems, logic functions and logic gates, Boolean algebra – Combinational circuits: Simplification of logic circuits using Karnaugh maps and tabulation method; Gate level design; Adders, subtractors, encoders and decoders; Multiplexers and demultiplexers; MSI Design; Programmable devices (ROM, PAL, PLA, ...) – Sequential circuits: Flip-flops, latches, analysis and design of simple sequential circuits; State tables and state diagrams; Counters, registers, RAMs – Integrated circuits and logic families."
+  },
+  {
+    "question": "What is the topic of CS141 course?",
+    "answer": "Fundamental programming constructs: Syntax and semantics of a higher-level language; variables, types, expressions, and assignment − Simple I/O − Conditional and iterative control structures − Functions and parameter passing − Structured decomposition − Algorithms and problem-solving: Problem-solving strategies; the role of algorithms in the problem-solving process; implementation strategies for algorithms; debugging strategies; the concept and properties of algorithms − Fundamental data structures − Machine level representation of data − Human-computer interaction: Introduction to design issues − Software development methodology: Fundamental design concepts and principles; structured design; testing and debugging strategies; test-case design; programming environments; testing and debugging tools.",
+    "context": "Basic Computer Courses: CS141  Programming Fundamentals |Credits: 3 Hours |Prerequisites IT101"
+  },
+  {
+    "question": "What are the prerequisites for CS211 course?",
+    "answer": "CS241",
+    "context": "CS211 Data Structures and Algorithms | Credits: 3 Hours |Prerequisites CS241"
+  },
+  {
+    "question": "What are the topics covered in CS241 course?",
+    "answer": "Introduction to object-oriented programming − Using an object-oriented language; classes and objects; syntax of class definitions; methods; members − Simple",
+    "context": "CS241 Object-Oriented Programming |Credits: 3 Hours |Prerequisites CS141"
+  },
+  {
+    "question": "What is the topic of signal processing in the university rules?",
+    "answer": "processing of signals; Sampling; Difference equations; Discrete-time Fourier transforms; Discrete and fast Fourier transforms; Digital filter design.",
+    "context": "the section of university rules"
+  },
+  {
+    "question": "What are the fundamental data structures covered in CS211 course?",
+    "answer": "Stacks; queues; linked lists; hash tables; trees; graphs",
+    "context": "CS211 Data Structures and Algorithms | Credits: 3 Hours |Prerequisites CS241 Contents : Review of elementary programming concepts − Fundamental data structures: Stacks; queues; linked lists; hash tables; trees; graphs − Basic algorithmic analysis: big ―O,‖ little ―o,‖ omega, and theta notation"
+  },
+  {
+    "question": "What are the topics covered in the course CS321 Operating Systems?",
+    "answer": "Overview: Role and purpose of operating systems; history of operating system development; functionality of a typical operating system; design issues (efficiency, robustness, flexibility, portability, security, compatibility). Basic principles: Structuring methods; abstractions, processes, and resources; device organization; interrupts; user/system state transitions. Concurrency: The idea of concurrent execution; states and state diagrams; implementation structures; dispatching and context switching; interrupt handling in a concurrent environment. Mutual exclusion: Definition of the ―mutual exclusion‖ problem; deadlock detection and prevention; solution strategies; models and mechanisms (semaphores, monitors, condition variables, rendezvous); synchronization; multiprocessor issues. Scheduling: Preemptive and non-preemptive scheduling; scheduling policies; processes and threads; real-time issues. Memory management: Review of physical memory and memory management hardware; overlays, swapping, and partitions; paging and segmentation; page placement and replacement policies; working sets and thrashing; caching. Device management: Characteristics of serial and parallel devices; abstracting device differences; buffering strategies; direct memory access; recovery from failures. File systems: Fundamental concepts (directories, files, file operations) and implementation strategies.",
+    "context": "the exact chunk of text you used"
+  },
+  {
+    "question": "What are the prerequisites for the course CS321 Operating Systems?",
+    "answer": "CE221",
+    "context": "the exact chunk of text you used"
+  },
+  {
+    "question": "What is the credit value of the course CS321 Operating Systems?",
+    "answer": "3 Hours",
+    "context": "the exact chunk of text you used"
+  },
+  {
+    "question": "What are the topics covered in the course ple data?",
+    "answer": "variables, types, and expressions; assignment − Control structures: Iteration; conditionals − Message passing: Simple methods; parameter passing – Sub classing; encapsulation and information hiding; separation of behavior and implementation; class hierarchies; inheritance; polymorphism − Collection classes and iteration protocols − Using APIs: Class libraries; packages for graphics and GUI applications − Object-oriented design: Fundamental design concepts and principles; introduction to design patterns; object-oriented analysis and design; design for reuse .",
+    "context": "the exact chunk of text you used"
+  },
+  {
+    "question": "What is the subject of the course CS321 Operating Systems?",
+    "answer": "Operating Systems",
+    "context": "the exact chunk of text you used"
+  },
+  {
+    "question": "What are the topics covered in CS322 Computer Architecture and Operating Systems?",
+    "answer": "Computer architecture: data representation, digital logic, the internal structure of the CPU, primary and secondary storage, input/output, control unit, and assembly language. Operating systems: processes, inter-process communication, process scheduling, resource allocation, memory management, virtual memory, file systems, and input/output device management.",
+    "context": "CS322 Computer Architecture and Operating Systems |Credits : 3 Hours |Prerequisites CS141, CS201 Contents :"
+  },
+  {
+    "question": "What is the focus of CS341 Visual Programming?",
+    "answer": "Graphical user interface (GUI), review of concepts, and anatomy of a windows program using different languages. Available developing tools. Keyboard and mouse input, menus creating, adding menus to programs. Dialog boxes: buttons, text, list boxes, grids and spreadsheets. Graphics files and file handling. Multiple documents interfaces and views (MDI). Exception Handling and Debugging. Object Linking and Embedding (OLE).",
+    "context": "CS341 Visual Programming |Credits : 3 Hours |Prerequisites CS211 Contents :"
+  },
+  {
+    "question": "What topics are covered in CS351 Computer Graphics?",
+    "answer": "This course introduces techniques for 2D and 3D computer graphics, including simple color models, homogeneous coordinates, affine transformations (scaling, rotation, translation), viewing transformation, clipping, illumination and shading, texture maps, rendering, high level shader language, video display devices, physical and logical input devices, hierarchy of graphics software, hidden surface removal methods, Z-buffer and frame buffer",
+    "context": "CS351 Computer Graphics |Credits : 3 Hours |Prerequisites IT101, CS201 Contents :"
+  },
+  {
+    "question": "What are the topics covered in the university rules regarding file systems?",
+    "answer": "content and structure of directories; file system techniques; memory-mapped files; special purpose file systems; naming, searching, and access; backup strategies.",
+    "context": "Security and protection: Overview of system security; policy/mechanism separation; security methods and devices; protection, access, and authentication; models of protection; memory protection; encryption; recovery management."
+  },
+  {
+    "question": "What are the topics covered in the university rules regarding security and protection?",
+    "answer": "Overview of system security; policy/mechanism separation; security methods and devices; protection, access, and authentication; models of protection; memory protection; encryption; recovery management.",
+    "context": "Security and protection: Overview of system security; policy/mechanism separation; security methods and devices; protection, access, and authentication; models of protection; memory protection; encryption; recovery management."
+  },
+  {
+    "question": "What is the prerequisite for CS361 Artificial Intelligence?",
+    "answer": "IT101, CS201",
+    "context": "CS361 Artificial Intelligence |Credits : 3 Hours |Prerequisites IT101, CS201"
+  },
+  {
+    "question": "What are some topics covered in CS391 Software Engineering?",
+    "answer": "Software processes, software requirements and specifications, software design, software validation, software evolution, software project management, and component-based computing",
+    "context": "CS391 Software Engineering | Credits : 3 Hours |Prerequisites CS211\nContents :"
+  },
+  {
+    "question": "What is the topic of IS201 Foundations of Information Systems?",
+    "answer": "Information systems components and information systems in organizations",
+    "context": "IS201 Foundations of Information Systems  |Credits : 3 Hours |Prerequisites IT101"
+  },
+  {
+    "question": "What are some examples of planning systems in CS361 Artificial Intelligence?",
+    "answer": "Definition and examples of planning systems; planning as search; operator-based planning; propositional planning",
+    "context": "AI planning systems: Definition and examples of planning systems; planning as search; operator-based planning; propositional planning."
+  },
+  {
+    "question": "What is the topic of advanced search in CS361 Artificial Intelligence?",
+    "answer": "Genetic algorithms; simulated annealing; local search",
+    "context": "Advanced search: Genetic algorithms; simulated annealing; local search"
+  },
+  {
+    "question": "What are the topics covered in IS211 File Organization?",
+    "answer": "Introduction to the Design and Specification of File Structures − Fundamental File Processing Operations − Fundamental File Structure Concepts − Managing Files of Records − Secondary Storage and System Software − Organizing Files for Performance. Indexing − Multi-Level Indexing and B-Trees − Indexed Sequential File Access and Prefix B+ Trees. Hashing.",
+    "context": "IS211 File Organization |Credits : 3 Hours |Prerequisites CS241 Contents :"
+  },
+  {
+    "question": "What are the prerequisites for IS212 Databases?",
+    "answer": "CS141",
+    "context": "IS212 Databases |Credits : 3 Hours |Prerequisites CS141"
+  },
+  {
+    "question": "What are the components of database systems?",
+    "answer": "components of database systems",
+    "context": "Database systems: History and motivation for database systems; components of database systems; DBMS functions; database architecture and data independence."
+  },
+  {
+    "question": "What are the types of data models mentioned in the text?",
+    "answer": "conceptual models; object-oriented model; relational data model",
+    "context": "Data modeling: Data modeling; conceptual models; object-oriented model; relational data model."
+  },
+  {
+    "question": "What are the types of file access mentioned in IS211 File Organization?",
+    "answer": "Indexed Sequential File Access and Prefix B+ Trees",
+    "context": "Indexing − Multi-Level Indexing and B-Trees − Indexed Sequential File Access and Prefix B+ Trees."
+  },
+  {
+    "question": "What is the topic of the IS231 Systems Analysis and Design course?",
+    "answer": "Systems Analysis and Design, IS project management, and information systems",
+    "context": "IS231 Systems Analysis and Design |Credits : 3 Hours |Prerequisites IT101"
+  },
+  {
+    "question": "What are the topics covered in the IT101 IT Fundamentals course?",
+    "answer": "Brief history of computing, computing system components, machine level representation of data",
+    "context": "IT101 IT Fundamentals |Credits : 3 Hours |Prerequisites − None"
+  },
+  {
+    "question": "What is the focus of the relational database design topic?",
+    "answer": "Database design, functional dependency, normal forms, multivalued dependency, join dependency, representation theory",
+    "context": "Relational database design: Database design; functional dependency; normal forms; multivalued dependency; join dependency; representation theory."
+  },
+  {
+    "question": "What are some of the factors that affect user experience in IS project management?",
+    "answer": "User interface design, system data requirements, factors affecting security, ethical considerations",
+    "context": "Analysis and specification of system requirements; Data collection methods; Methods for structuring and communicating requirements; Factors affecting user experience; User interface design;"
+  },
+  {
+    "question": "What are some of the approaches to implementing information systems?",
+    "answer": "Packaged systems, enterprise systems, outsourced development, in-house development",
+    "context": "Different approaches to implementing information systems to support business requirements: Packaged systems; enterprise; systems; Outsourced development; In-house development."
+  },
+  {
+    "question": "What is the von Neumann model of computation?",
+    "answer": "the von Neumann model of computation; the fetch/decode/execute cycle; basic machine organization.",
+    "context": "Hardware realizations of algorithms"
+  },
+  {
+    "question": "What are the components of an operating system?",
+    "answer": "basic components of an operating system.",
+    "context": "Operating systems and virtual machines"
+  },
+  {
+    "question": "What are the types of transmission media in data transmission?",
+    "answer": "wired and wireless, transmission impairment.",
+    "context": "IT251 Data Communications"
+  },
+  {
+    "question": "What are the layers of the OSI model?",
+    "answer": "Application, Transport, and network layers protocols.",
+    "context": "IT351 Computer Networks"
+  },
+  {
+    "question": "What scripting languages are used in Web Programming?",
+    "answer": "PHP and Java",
+    "context": "IT371 Web Programming"
+  },
+  {
+    "question": "What are the prerequisites for MM301 Introduction to Multimedia Technology?",
+    "answer": "CS241",
+    "context": "Script. MM301 Introduction to Multimedia Technology|Credits : 3 Hours |Prerequisites CS241"
+  },
+  {
+    "question": "What are the contents of CE221 Computer Architecture?",
+    "answer": "Register transfer notation; physical considerations (gate delays, fan-in, fan-out). Assembly level organization: Basic organization of the von Neumann machine; control unit; instruction fetch, decode, and execution; instruction sets and types (data manipulation, control, I/O); assembly/machine language programming; instruction formats; addressing modes; subroutine call and return mechanisms; I/O and interrupts. Memory systems: Storage systems and their technology; coding, data compression, and data integrity; memory hierarchy; main memory organization and operations; latency, cycle time, bandwidth, and interleaving; cache memories (address mapping, block size, replacement and store policy); virtual memory (page table, TLB); fault handling and reliability. Interfacing and communication: I/O fundamentals: handshaking, buffering, programmed I/O, interrupt-driven I/O; interrupt structures: vectored and prioritized, interrupt acknowledgment; external storage, physical organization, and drives; buses: bus protocols, arbitration, direct-memory access (DMA); introduction to networks; multimedia support; raid architectures. Functional organization: Implementation of simple datapaths; control unit: hardwired realization vs. microprogrammed realization; instruction pipelining; introduction to instruction-level parallelism (ILP). Multiprocessor and alternative architectures: Introduction to SIMD, MIMD, VLIW, EPIC; systolic architecture; interconnection networks; shared memory systems; cache coherence; memory",
+    "context": "CE221 Computer Architecture |Contents :"
+  },
+  {
+    "question": "What are the roles and uses of multimedia technology?",
+    "answer": "Roles and uses of multimedia technology in many areas such as education, advertisement, and public relation etc.",
+    "context": "MM301 Introduction to Multimedia Technology|Contents : Basic knowledge about multimedia and multimedia technology. Basic media such as text, image, animation, graphic, and sound. Current multimedia technology. Roles and uses of multimedia technology in many areas such as education, advertisement, and public relation etc."
+  },
+  {
+    "question": "What are the topics covered in MM301 Introduction to Multimedia Technology?",
+    "answer": "Basic knowledge about multimedia and multimedia technology. Basic media such as text, image, animation, graphic, and sound. Current multimedia technology.",
+    "context": "MM301 Introduction to Multimedia Technology|Contents :"
+  },
+  {
+    "question": "What is the credit hour for CE221 Computer Architecture?",
+    "answer": "3 Hours",
+    "context": "CE221 Computer Architecture |Credits : 3 Hours"
+  },
+  {
+    "question": "What is the topic of CS311 course?",
+    "answer": "Algorithm Design and Analysis",
+    "context": "CS311 – Algorithm Design and Analysis – 3 Hours – Prerequisites: CS211 – Review of proof techniques – Basic algorithmic analysis: Asymptotic analysis of upper and average complexity bounds; Best, average, and worst case behaviors; Big-O, little-o, Ω, and Θ notation; Standard complexity classes; Empirical measurements of performance; Time and space tradeoffs in algorithms; Using recurrence relations to analyze recursive algorithms – Algorithmic strategies: Branch-and-bound; Heuristics; Pattern matching and string/text algorithms; Numerical approximation – Graph and tree algorithms: Shortest-path algorithms (Dijkstra’s and Floyd’s algorithms); Transitive closure (Floyd’s algorithm); Minimum spanning tree (Prim’s and Kruskal’s algorithms); Topological sort – Dynamic Programming – Randomized Algorithms – NP-complete problems."
+  },
+  {
+    "question": "What is the prerequisite for CS311 course?",
+    "answer": "CS211",
+    "context": "CS311 – Algorithm Design and Analysis – 3 Hours – Prerequisites: CS211 – Review of proof techniques – Basic algorithmic analysis: Asymptotic analysis of upper and average complexity bounds; Best, average, and worst case behaviors; Big-O, little-o, Ω, and Θ notation; Standard complexity classes; Empirical measurements of performance; Time and space tradeoffs in algorithms; Using recurrence relations to analyze recursive algorithms – Algorithmic strategies: Branch-and-bound; Heuristics; Pattern matching and string/text algorithms; Numerical approximation – Graph and tree algorithms: Shortest-path algorithms (Dijkstra’s and Floyd’s algorithms); Transitive closure (Floyd’s algorithm); Minimum spanning tree (Prim’s and Kruskal’s algorithms); Topological sort – Dynamic Programming – Randomized Algorithms – NP-complete problems."
+  },
+  {
+    "question": "What is the topic of CS342 course?",
+    "answer": "Automata and Language Theory",
+    "context": "CS342 – Automata and Language Theory – 3 Hours – Prerequisites: CS141, CS201 – Introduction: The purpose of automata theory; Relationship of automata and languages; The Chomsky hierarchy – Finite automata: Definition and operation; Deterministic and nondeterministic automata and their equivalence; Two-way finite automata; Minimization of deterministic automata – Regular expressions: Relationship with finite automata; Kleene analysis and synthesis theorems; Applications – Properties of regular sets: Myhill-Nerode theorem; Pumping lemma; Closure properties; Decision algorithms – Context-free grammars: Equivalence and ambiguity; Languages generated; Simplification; Chomsky and Greibach normal forms; Parsing strategies – Properties of context-free languages: Pumping lemma; Closure properties; Decision algorithms – Pushdown automata: Accepted languages; Relation to context-free languages – Linear-bounded automata: Definition and operation; Minimization – Turing machines: Definition and operation; Time and space complexity; Decidability and undecidability – Undecidable problems: Halting problem; Post’s correspondence problem; Undecidable problems in automata theory – Applications of automata theory: Text processing; Compiler design; Network protocols"
+  },
+  {
+    "question": "What is the prerequisite for CS342 course?",
+    "answer": "CS141, CS201",
+    "context": "CS342 – Automata and Language Theory – 3 Hours – Prerequisites: CS141, CS201 – Introduction: The purpose of automata theory; Relationship of automata and languages; The Chomsky hierarchy – Finite automata: Definition and operation; Deterministic and nondeterministic automata and their equivalence; Two-way finite automata; Minimization of deterministic automata – Regular expressions: Relationship with finite automata; Kleene analysis and synthesis theorems; Applications – Properties of regular sets: Myhill-Nerode theorem; Pumping lemma; Closure properties; Decision algorithms – Context-free grammars: Equivalence and ambiguity; Languages generated; Simplification; Chomsky and Greibach normal forms; Parsing strategies – Properties of context-free languages: Pumping lemma; Closure properties; Decision algorithms – Pushdown automata: Accepted languages; Relation to context-free languages – Linear-bounded automata: Definition and operation; Minimization – Turing machines: Definition and operation; Time and space complexity; Decidability and undecidability – Undecidable problems: Halting problem; Post’s correspondence problem; Undecidable problems in automata theory – Applications of automata theory: Text processing; Compiler design; Network protocols"
+  },
+  {
+    "question": "What is the topic of performance enhancements mentioned in the university rules?",
+    "answer": "RISC architecture; branch prediction; prefetching; scalability",
+    "context": "ory models and memory consistency. Performance enhancements: RISC architecture; branch prediction; prefetching; scalability. Contemporary architectures: Hand-held devices; embedded systems; trends in processor architecture."
+  },
+  {
+    "question": "What is the prerequisite for CS352?",
+    "answer": "CS211",
+    "context": "CS352 – Image Processing – 3 Hours – Prerequisite: CS211 – Scope and applications of image processing – Perspective transformations: Modeling picture taking; Homogeneous coordinates; Dual reference frames – Spatial frequency domain: Sampling theorem; Template matching; Convolution theorem; Spatial filtering – Enhancement and restoration; Image segmentation – Image representation: Spatial differentiation and smoothing; Template matching; Region analysis; Contour following – Descriptive methods in scene analysis – Hardware and software considerations – Applications."
+  },
+  {
+    "question": "What topics are covered in CS431?",
+    "answer": "Load sharing; Scheduling; Reliability; Recovery; Memory management – Distributed systems: File systems; Agreement protocols; Object-oriented operating systems",
+    "context": "CS431 – Advanced Operating Systems – 3 Hours – Prerequisite: CS321 – Parallel and distributed operating systems – Topics: Load sharing; Scheduling; Reliability; Recovery; Memory management – Distributed systems: File systems; Agreement protocols; Object-oriented operating systems."
+  },
+  {
+    "question": "What is the scope and application of image processing in CS352?",
+    "answer": "Scope and applications of image processing",
+    "context": "CS352 – Image Processing – 3 Hours – Prerequisite: CS211 – Scope and applications of image processing – Perspective transformations: Modeling picture taking; Homogeneous coordinates; Dual reference frames – Spatial frequency domain: Sampling theorem; Template matching; Convolution theorem; Spatial filtering – Enhancement and restoration; Image segmentation – Image representation: Spatial differentiation and smoothing; Template matching; Region analysis; Contour following – Descriptive methods in scene analysis – Hardware and software considerations – Applications."
+  },
+  {
+    "question": "What is the prerequisite for CS441?",
+    "answer": "CS211, CS341, CE221",
+    "context": "CS441 – Compiler Construction – 3 Hours – Prerequisites: CS211, CS341, CE221 – Compiler functions and language elements – BNF grammars; Regular expressions; Finite state machines; Lexical analyzers – Context-free grammars; Grammar ambiguity; Parse trees; Pushdown automata – Parsing methods: Top-down, Recursive descent,"
+  },
+  {
+    "question": "What is the Church-Turing thesis?",
+    "answer": "Church-Turing thesis",
+    "context": "tomata: Definition and operation; Context-sensitive languages and their properties – Turing machines: Definitions; Universal Turing machine; Church-Turing thesis; Variations; Recognized languages; Computable languages; Undecidability; The P = NP question."
+  },
+  {
+    "question": "What are the topics covered in CS451 Computer Animation?",
+    "answer": "Key-frame animation; Camera animation; Forward and inverse kinematics; Particle systems; Rigid body simulation; Flocking; Autonomous behavior; Modeling natural phenomena (e.g., water, gases); Articulated structure animation; Facial animation; Cloth simulation; Scripting systems; Morphing; Motion capture; Deformation.",
+    "context": "CS451 – Computer Animation – 3 Hours – Prerequisite: None – Topics: ... "
+  },
+  {
+    "question": "What is the prerequisite for CS453 Game Programming?",
+    "answer": "MM301",
+    "context": "CS453 – Game Programming – 3 Hours – Prerequisite: MM301 – Techniques and programming strategies for efficient game engine development – Topics: ... "
+  },
+  {
+    "question": "What is the scope of LL, LR – Symbol table construction; Type checking – Code generation?",
+    "answer": "Handling recursion and arrays – Code optimization techniques.",
+    "context": "LL, LR – Symbol table construction; Type checking – Code generation: Handling recursion and arrays – Code optimization techniques."
+  },
+  {
+    "question": "What are the prerequisites for CS442 Programming Language Design?",
+    "answer": "CS211, CE221",
+    "context": "CS442 – Programming Language Design – 3 Hours – Prerequisites: CS211, CE221 – Fundamental issues in language design: ... "
+  },
+  {
+    "question": "What are the topics covered in CS452 Computer Vision?",
+    "answer": "Cameras and projection models; Low-level image processing (filtering, edge detection); Mid-level vision (segmentation, clustering); Shape reconstruction from stereo – High-level vision: Object recognition; Scene recognition; Face detection; Human motion categorization – Applications: Scene reconstruction; Tracking.",
+    "context": "CS452 – Computer Vision – 3 Hours – Prerequisites: CS241, PHYS102 – Introduction to computer vision concepts and applications – Topics: ... "
+  },
+  {
+    "question": "What topics are covered in CS453?",
+    "answer": "Landscape visualization; Complex scene rendering; Lighting and shadows; Motion control; Collision detection; Dynamics; Image-based rendering; Multiplayer support.",
+    "context": "CS453 – Game Programming – 3 Hours – Prerequisite: MM301 – Techniques and programming strategies for efficient game engine development – Topics: Landscape visualization; Complex scene rendering; Lighting and shadows; Motion control; Collision detection; Dynamics; Image-based rendering; Multiplayer support."
+  },
+  {
+    "question": "What is the prerequisite for CS461?",
+    "answer": "CS361",
+    "context": "CS461 – Intelligent Systems – 3 Hours – Prerequisite: CS361 – Application areas of intelligent systems – Topics: Intelligent system architecture; Knowledge engineering and control; Expert system languages; Bayesian inference; Fuzzy logic; Decision support systems – Development tools: Software for expert and intelligent systems – Robotics: Overview; Configuration space; Planning; Sensing; Robot programming."
+  },
+  {
+    "question": "What is supervised learning in CS462?",
+    "answer": "Classification and regression (K-nearest neighbors, decision trees, naïve Bayes, SVMs, logistic regression, evolutionary algorithms, Bayesian networks, HMMs, neural networks, boosting)",
+    "context": "CS462 – Machine Learning – 3 Hours – Prerequisite: CS361 – Introduction to machine learning: Definitions and examples – Supervised learning: Classification and regression (K-nearest neighbors, decision trees, naïve Bayes, SVMs, logistic regression, evolutionary algorithms, Bayesian networks, HMMs, neural networks, boosting) – Unsupervised learning: Clustering (K-means, hierarchical), PCA, ICA, Expectation Maximization – Reinforcement learning – Kernel methods and sparse kernel machines – Mixture models – Combining multiple learners."
+  },
+  {
+    "question": "What is the topic of CS463?",
+    "answer": "Introduction to pattern recognition",
+    "context": "CS463 – Pattern Recognition – 3 Hours – Prerequisite: CS361 – Introduction to pattern recognition – Topics: Statistical decision theory; Parameter estimation; Principal Component Analysis (PCA); Linear Discriminant Analysis (LDA); Face recognition – Non-parametric techniques: Decision trees; Neural networks; Classifier combination; Feature selection – Unsupervised learning: Clustering; Multidimensional scaling – Semi-supervised learning."
+  },
+  {
+    "question": "What are the prerequisites for CS471?",
+    "answer": "CS211, IT351",
+    "context": "CS471 – Introduction to Computer Security – 3 Hours – Prerequisites: CS211, IT351 – Security goals and fundamentals: Confidentiality, integrity, availability – Risk assessment and management – Sec"
+  },
+  {
+    "question": "What is the topic of CS472 course?",
+    "answer": "Introduction to cryptography",
+    "context": "CS472 – Cryptography – 3 Hours – Prerequisites: CS211, IT351 – Introduction to cryptography – Topics: ... "
+  },
+  {
+    "question": "What are the prerequisites for CS491 course?",
+    "answer": "CS391",
+    "context": "CS491 – Software Quality Assurance and Testing – 3 Hours – Prerequisite: CS391 – ... "
+  },
+  {
+    "question": "What is the topic of IS311 course?",
+    "answer": "Geographical Information Systems",
+    "context": "IS311 – Geographical Information Systems – 3 Hours – Prerequisites: IS201, IS212 – Fundamentals of GIS: ... "
+  },
+  {
+    "question": "What is the topic of IS321 course?",
+    "answer": "Advanced Project Management",
+    "context": "IS321 – Advanced Project Management – 3 Hours – Prerequisite: IS221 – ... "
+  },
+  {
+    "question": "What is the topic of university rules section?",
+    "answer": "Computer Science and Information Systems courses",
+    "context": "University rules: ... CS472, CS491, IS311, IS321 – ... "
+  },
+  {
+    "question": "What are the topics covered in IS341?",
+    "answer": "DSS characteristics, models, and components – Institutional vs. ad hoc DSS – DSS evolution and operation – Applications across disciplines – Hardware and software selection for DSS.",
+    "context": "IS341 – Decision Support Systems – 3 Hours – Prerequisite: IS201 – Basic concepts and architecture of DSS – Topics: DSS characteristics, models, and components – Institutional vs. ad hoc DSS – DSS evolution and operation – Applications across disciplines – Hardware and software selection for DSS."
+  },
+  {
+    "question": "What are the prerequisites for IS413?",
+    "answer": "IS201, IT371",
+    "context": "IS413 – Web Information Systems – 3 Hours – Prerequisites: IS201, IT371 – Topics: Web technologies and professional publishing; Web application development – Server-side and client-side scripting – Managing information systems via web technologies – Distributed databases and web interfaces – Webmaster administration."
+  },
+  {
+    "question": "What is the topic of IS412?",
+    "answer": "Distribution transparency; Distributed database design; Transaction mapping and optimization – Distributed transaction management; Concurrency control; Recovery – Distributed database administration; Commercial systems; The SDD-1 system – Object databases.",
+    "context": "IS412 – Distributed and Object Databases – 3 Hours – Prerequisite: IS212 – Topics: Distribution transparency; Distributed database design; Transaction mapping and optimization – Distributed transaction management; Concurrency control; Recovery – Distributed database administration; Commercial systems; The SDD-1 system – Object databases."
+  },
+  {
+    "question": "What is the topic of IS414?",
+    "answer": "Core concepts",
+    "context": "IS414 – Data Mining and Business Intelligence – 3 Hours – Prerequisite: IS201 – Topics: Core concept"
+  },
+  {
+    "question": "What are the topics covered in IS411?",
+    "answer": "Data and database administration; Transaction processing; Application-level DBMS usage; Enterprise system integration – Data/information architecture; Data security management – Security principles and implementation – Data quality management: Audits and improvement – Business intelligence; OLAP; Data warehousing.",
+    "context": "IS411 – Advanced Database – 3 Hours – Prerequisite: IS212 – Topics: Data and database administration; Transaction processing; Application-level DBMS usage; Enterprise system integration – Data/information architecture; Data security management – Security principles and implementation – Data quality management: Audits and improvement – Business intelligence; OLAP; Data warehousing."
+  },
+  {
+    "question": "What topics are covered in IS415 Database Administration?",
+    "answer": "DBA roles (VP, developer, production); Evolving responsibilities – Environment management: Network, CPU, disk, RAM – Instance management: SGA regions, architecture – Table and index management – Security methods: VPD, role-based security, grant execute – User management: Creating users, auditing activity, managing privileges and roles – Displaying security info from data dictionary – Object management – Database maintenance.",
+    "context": "IS415 – Database Administration – 3 Hours – Prerequisite: IS212 – Topics: DBA roles (VP, developer, production); Evolving responsibilities – Environment management: Network, CPU, disk, RAM – Instance management: SGA regions, architecture – Table and index management – Security methods: VPD, role-based security, grant execute – User management: Creating users, auditing activity, managing privileges and roles – Displaying security info from data dictionary – Object management – Database maintenance."
+  },
+  {
+    "question": "What are the prerequisites for IS417 Multimedia Databases?",
+    "answer": "IS212, CS241",
+    "context": "IS417 – Multimedia Databases – 3 Hours – Prerequisites: IS212, CS241 – Topics: Types and characteristics of multimedia data – Multimedia DBMS components – Storage and retrieval structures; Disk scheduling; Server admission – Multimedia modeling and metadata – Access models: Object-oriented, temporal, spatial – Authoring tools; Query languages and processing – Multimedia database architecture."
+  },
+  {
+    "question": "What is the focus of IS441 Quality Assurance of Information Systems?",
+    "answer": "QA in IS design; Data quality – QA in supply chain networks – Supply chain performance metrics and uncertainty – Forecasting and safety inventory – DSS for supply chain decision-making.",
+    "context": "IS441 – Quality Assurance of Information Systems – 3 Hours – Prerequisite: IS201 – Topics: QA in IS design; Data quality – QA in supply chain networks – Supply chain performance metrics and uncertainty – Forecasting and safety inventory – DSS for supply chain decision-making."
+  },
+  {
+    "question": "What are the prerequisites for IS442 IS Application Development?",
+    "answer": "IS212, IS413",
+    "context": "IS442 – IS Application Development – 3 Hours – Prerequisites: IS212, IS413 – Topics: Database access – Development approaches: Object"
+  },
+  {
+    "question": "What topics are covered in IS416 Transaction Processing?",
+    "answer": "Overview of transaction processing systems and applications (airline, banking, inventory) – Topics: System evolution; Fault tolerance; Processing monitors – Lock and recovery managers; File management; Access paths – Disaster recovery; Data replication: Single-master and multi-master.",
+    "context": "IS416 – Transaction Processing – 3 Hours – Prerequisite: IS212 – Overview of transaction processing systems and applications (airline, banking, inventory) – Topics: System evolution; Fault tolerance; Processing monitors – Lock and recovery managers; File management; Access paths – Disaster recovery; Data replication: Single-master and multi-master."
+  },
+  {
+    "question": "What is the prerequisite for IS451 course?",
+    "answer": "IS413",
+    "context": "IS451 – Social Information Systems – 3 Hours – Prerequisite: IS413 – Topics: Social and technical elements of online communities; Social science theories; Technology and support for successful interaction – Social network design choices and implications – Community startup and feature configuration – Current research in social network analysis and security."
+  },
+  {
+    "question": "What are the topics covered in IT411 course?",
+    "answer": "Threats to information systems; Technical and human safeguards; Security planning and management; Authentication and authorization; Encryption techniques and cipher analysis; Virus protection, privacy, secure system design, database security, relability, and integrity.",
+    "context": "IT411 – Information Assurance and Security – 3 Hours – Prerequisite: IT351 – Topics: Threats to information systems; Technical and human safeguards; Security planning and management; Authentication and authorization; Encryption techniques and cipher analysis; Virus protection, privacy, secure system design, database security, relability, and integrity."
+  },
+  {
+    "question": "What is the prerequisite for IT432 course?",
+    "answer": "IT351",
+    "context": "IT432 – Network Programming – 3 Hours – Prerequisite: IT351 – Topics: Programming aspects of computer networks; Communication protocols; Socket programming (TCP/UDP); Inter-process communication; Development of network software; Java ne"
+  },
+  {
+    "question": "What are the topics covered in IT331 course?",
+    "answer": "FCAPS & OAMP models; Manager/agent architecture; MIB, OID, polling, event-based management; SNMP, netflow, netconfig protocols; CLI, SLA metrics; Lab experiments on network management tools and metrics.",
+    "context": "IT331 – Network Management – 3 Hours – Prerequisite: IT351 – Topics: FCAPS & OAMP models; Manager/agent architecture; MIB, OID, polling, event-based management; SNMP, netflow, netconfig protocols; CLI, SLA metrics; Lab experiments on network management tools and metrics."
+  },
+  {
+    "question": "What are the topics covered in IT431 course?",
+    "answer": "Wireless standards evolution; Challenges in mobile computing; WLANs, satellite networks, mobile IP; Client-server adaptation; Mobile data access and caching; Middleware and support tools; Performance issues and emerging technologies.",
+    "context": "IT431 – Wireless and Mobile Computing – 3 Hours – Prerequisite: IT251 – Topics: Wireless standards evolution; Challenges in mobile computing; WLANs, satellite networks, mobile IP; Client-server adaptation; Mobile data access and caching; Middleware and support tools; Performance issues and emerging technologies."
+  },
+  {
+    "question": "What are the prerequisites for IT433?",
+    "answer": "IT351",
+    "context": "IT433 – Network Forensics – 3 Hours – Prerequisite: IT351 – Topics: Fundamentals of computer and network forensics; Forensic duplication and analysis; Network surveillance; Intrusion detection and incident response; Anonymity and cyber law; Security policies; Court report writing and case studies."
+  },
+  {
+    "question": "What are the topics covered in IT441?",
+    "answer": "Design, selection, implementation, and management of enterprise IT solutions; Infrastructure and business alignment; Frameworks for system administration, data architecture, middleware, legacy integration, and cost analysis; Risk and security management within audit and compliance standards.",
+    "context": "IT441 – Enterprise Architecture – 3 Hours – Prerequisite: IT351 – Topics: Design, selection, implementation, and management of enterprise IT solutions; Infrastructure and business alignment; Frameworks for system administration, data architecture, middleware, legacy integration, and cost analysis; Risk and security management within audit and compliance standards."
+  },
+  {
+    "question": "What are the prerequisites for IT451?",
+    "answer": "IT351, MATH202",
+    "context": "IT451 – Network Analysis and Design – 3 Hours – Prerequisites: IT351, MATH202 – Topics: Design and performance analysis of local computer networks; Multi-access procedures; Network architecture evaluation; Top-down design methodology; Technical and business constraints; Network topology and device selection."
+  },
+  {
+    "question": "What are the topics covered in MM302?",
+    "answer": "Principles and technologies of digital video; Compression formats (JPEG, MPEG, H.26x); Video/audio standards; Editing operations (import, layout, transitions, effects, export); Image and video manipulation tools.",
+    "context": "MM302 – Introduction to Digital Video – 3 Hours – Prerequisites: CS241, MATH202 – Topics: Principles and technologies of digital video; Compression formats (JPEG, MPEG, H.26x); Video/audio standards; Editing operations (import, layout, transitions, effects, export); Image and video manipulation tools."
+  },
+  {
+    "question": "What is the prerequisite for IT471?",
+    "answer": "IT371",
+    "context": "IT471 – E-commerce – 3 Hours – Prerequisite: IT371 – Topics: E-commerce economics and business models; Technology architectures; Supply chain and consumer behavior; Legal and ethical issues; Privacy and security; Data accuracy and disaster recovery; Site design and rollout; Internet, intranet, extranet solutions; EDI and payment systems."
+  },
+  {
+    "question": "What are the topics covered in MM402?",
+    "answer": "Script and storyboard development across media; Storytelling with images and action; Narrative, documentary, and experimental approaches; Analysis and production of student projects.",
+    "context": "MM402 – Scripting and Storyboarding – 3 Hours – Prerequisite: MM301 – Topics: Script and storyboard development across media; Storytelling with images and action; Narrative, documentary, and experimental approaches; Analysis and production of student projects."
+  },
+  {
+    "question": "What is the prerequisite for MM403?",
+    "answer": "MM301",
+    "context": "MM403 – Digital Sound – 3 Hours – Prerequisite: MM301 – Topics: Introduction to sound editing and design; Role of sound in cinema; Basics of sound, microphones, and analog-to-digital conversion; Film sound language; Editing with Pro Tools; Image and video sound manipulation tools."
+  },
+  {
+    "question": "What are some applications of Virtual Reality mentioned in MM411?",
+    "answer": "medicine, simulation, and training",
+    "context": "MM411 – Virtual Reality – 3 Hours – Prerequisite: CS352 – Topics: Stereoscopic display; Force feedback and haptic devices; Viewer tracking; Collision detection; Visibility computation; Time-critical rendering and LOD; Image-based VR; Distributed VR and collaboration; Interactive modeling; UI issues; Applications in medicine, simulation, and training."
+  },
+  {
+    "question": "What are some topics covered in MM421?",
+    "answer": "Computational photography and 3D capture techniques; Shape and appearance modeling; Surface representations and data structures; Image completion, lighting, and rendering; Photo quality assessment; Non-photorealistic rendering; Geometry processing (smoothing, denoising, compression, optimization of large polygonal models).",
+    "context": "MM421 – 3D Photography and Geometry Processing – 3 Hours – Prerequisite: MM301 – Topics: Computational photography and 3D capture techniques; Shape and appearance modeling; Surface representations and data structures; Image completion, lighting, and rendering; Photo quality assessment; Non-photorealistic rendering; Geometry processing (smoothing, denoising, compression, optimization of large polygonal models)."
+  },
+  {
+    "question": "What is the prerequisite for MM412?",
+    "answer": "CS341",
+    "context": "MM412 – Human Computer Interaction – 3 Hours – Prerequisite: CS341 – Topics: Foundations of HCI; Human-centered development and evaluation; Usability testing; GUI design and programming; Interaction styles and techniques; Multimedia systems; Speech and NLP; Collaboration tools and intelligent agents."
+  },
+  {
+    "question": "What are the topics covered in CE421?",
+    "answer": "Single-threaded and parallel architectures; DLP, ILP, TLP; Memory wall and cache coherence; Multiprocessors and interconnection networks; Memory consistency models; Software distributed shared memory; Multithreading and chip multiprocessing; Current research and trends.",
+    "context": "CE421 – Advanced Computer Architecture – 3 Hours – Prerequisite: CE221 – Topics: Single-threaded and parallel architectures; DLP, ILP, TLP; Memory wall and cache coherence; Multiprocessors and interconnection networks; Memory consistency models; Software distributed shared memory; Multithreading and chip multiprocessing; Current research and trends."
+  },
+  {
+    "question": "What is the prerequisite for CE422?",
+    "answer": "CE221",
+    "context": "CE422 – Embedded Systems – 3 Hours – Prerequisite: CE221 – Topics: Nature and challenges of embedded systems; Microcontrollers and embedded software; Real-time systems (timing and scheduling); Testing, performance, and reliability; Low-power computing and energy issues; Design methodologies and tool support; Maintenance and upgrade strategies."
+  },
+  {
+    "question": "What is the topic of IS221?",
+    "answer": "System life cycle management; Requirements, design, implementation; Integration and performance tracking; Stakeholder management; Staffing and cost analysis; Reporting and change management; Software tools for tracking; Team collaboration techniques.",
+    "context": "IS221 – Project Management – 2 Hours – Prerequisite: IT101 – Topics: System life cycle management; Requirements, design, implementation; Integration and performance tracking; Stakeholder management; Staffing and cost analysis; Reporting and change management; Software tools for tracking; Team collaboration techniques."
+  },
+  {
+    "question": "What is the prerequisite for CS382?",
+    "answer": "IS221",
+    "context": "CS382 – Field Training – 3 Hours – Prerequisite: IS221 – Topics: Professional engagement with computing field; Bridging academic learning with societal expectations; Exposure to public and private sector roles; Practical experience to prepare students for mature professional practice."
+  },
+  {
+    "question": "What are the topics covered in CS381?",
+    "answer": "Event-driven programming; GUI design; APIs and graphic systems; Software requirements, design, validation, and evolution; Project management; Analysis tools; Professional and ethical responsibilities; Risks and liabilities of software systems.",
+    "context": "CS381 – Software Development and Professional Practice – 3 Hours – Prerequisites: CS211, CS391 – Topics: Event-driven programming; GUI design; APIs and graphic systems; Software requirements, design, validation, and evolution; Project management; Analysis tools; Professional and ethical responsibilities; Risks and liabilities of software systems."
+  },
+  {
+    "question": "What is the prerequisite for CS481?",
+    "answer": "CS381, IS221",
+    "context": "CS481 – Capstone Project I – 3 Hours – Prerequisites: CS381, IS221 – Topics: Software development lifecycle; GUI design and programming; APIs and tools; Requirements and specifications; Software validation and evolution; Project and team management; Communication skills; Hands-on project implementation."
+  },
+  {
+    "question": "What is the topic of IT361?",
+    "answer": "Professional engagement with the information technology field; Bridging academic learning with societal expectations; Exposure to public and private sector roles; Practical experience to prepare students for mature professionals often feel and be well equipped to practice their profession in a mature way.",
+    "context": "IT361 – Field Training – 3 Hours – Prerequisite: IS221 – Topics: Professional engagement with the information technology field; Bridging academic learning with societal expectations; Exposure to public and private sector roles; Practical experience to prepare students for mature professional practice."
+  },
+  {
+    "question": "What is the topic of IS452?",
+    "answer": "Advanced practical and professional skills in project development; Final implementation, testing, documentation, and presentation of the Information Systems capstone project.",
+    "context": "IS452 – Capstone Project II – 3 Hours – Prerequisite: IS451 – Topics: Advanced practical and professional skills in project development; Final implementation, testing, documentation, and presentation of the Information Systems capstone project."
+  },
+  {
+    "question": "What is the prerequisite for MM331?",
+    "answer": "IS221",
+    "context": "MM331 – Field Training – 3 Hours – Prerequisite: IS221 – Topics: Professional engagement with the multimedia field; Bridging academic learning with societal expectations; Exposure to public and private sector roles; Practical experience to prepare students for mature professional practice."
+  },
+  {
+    "question": "What is the topic of CS482?",
+    "answer": "Detailed design and implementation; Test planning and execution; Team collaboration; Oral presentation; Ethical and legal considerations; Independent learning of new technologies; Final product delivery and demonstration",
+    "context": "CS482 – Capstone Project II – 3 Hours – Prerequisite: CS481 – Topics: Detailed design and implementation; Test planning and execution; Team collaboration; Oral presentation; Ethical and legal considerations; Independent learning of new technologies; Final product delivery and demonstration"
+  },
+  {
+    "question": "What are the prerequisites for IT462?",
+    "answer": "IT461",
+    "context": "IT462 – Capstone Project II – 3 Hours – Prerequisite: IT461 – Topics: Advanced practical and professional skills in IT project development; Final implementation, testing, documentation, and presentation of the Information Technology capstone project."
+  },
+  {
+    "question": "What are the prerequisites for MM431?",
+    "answer": "CS381, IS221",
+    "context": "MM431 – Capstone Project I – 3 Hours – Prerequisites: CS381, IS221 – Topics: Human-computer interaction foundations; GUI design and programming; Software design, requirements, validation, and evolution; APIs and development tools; Software processes and project management; Team collaboration and communication; Hands-on multimedia project implementation."
+  },
+  {
+    "question": "What topics are covered in MM432?",
+    "answer": "Advanced practical and professional skills in multimedia project development; Final implementation, testing, documentation, and presentation of the multimedia capstone project.",
+    "context": "MM432 – Capstone Project II – 3 Hours – Prerequisite: MM431 – Topics: Advanced practical and professional skills in multimedia project development; Final implementation, testing, documentation, and presentation of the multimedia capstone project."
+  },
+  {
+    "question": "What topics are covered in MM431?",
+    "answer": "Human-computer interaction foundations; GUI design and programming; Software design, requirements, validation, and evolution; APIs and development tools; Software processes and project management; Team collaboration and communication; Hands-on multimedia project implementation.",
+    "context": "MM431 – Capstone Project I – 3 Hours – Prerequisites: CS381, IS221 – Topics: Human-computer interaction foundations; GUI design and programming; Software design, requirements, validation, and evolution; APIs and development tools; Software processes and project management; Team collaboration and communication; Hands-on multimedia project implementation."
+  },
+  {
+    "question": "What topics are covered in IT462?",
+    "answer": "Advanced practical and professional skills in IT project development; Final implementation, testing, documentation, and presentation of the Information Technology capstone project.",
+    "context": "IT462 – Capstone Project II – 3 Hours – Prerequisite: IT461 – Topics: Advanced practical and professional skills in IT project development; Final implementation, testing, documentation, and presentation of the Information Technology capstone project."
+  }
+]
