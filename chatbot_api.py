@@ -1,62 +1,92 @@
 from flask import Flask, request, jsonify
 from langchain.chains import RetrievalQA
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
 from langchain_groq import ChatGroq
-from langchain.schema import Document
 import numpy as np
-from dotenv import load_dotenv
+import voyageai
 import os
 
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
-groq_key = os.getenv("GROQ_API_KEY")
-if not groq_key:
-    raise ValueError("GROQ_API_KEY is not set in .env!")
+VOYAGE_API_KEY = "key"
+GROQ_API_KEY = "key"
 
-os.environ["GROQ_API_KEY"] = groq_key
+client = voyageai.Client(api_key=VOYAGE_API_KEY)
 
+# Custom Voyage wrapper
+class VoyageEmbeddings:
+    def embed_documents(self, texts):
+        response = client.embed(
+            texts=texts,
+            model="voyage-3-lite",
+            input_type="document"
+        )
+        return response.embeddings
 
-embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    def embed_query(self, text):
+        response = client.embed(
+            texts=[text],
+            model="voyage-3-lite",
+            input_type="query"
+        )
+        return response.embeddings[0]
 
+embedding_model = VoyageEmbeddings()
+
+# Load Chroma vector DB
 vectordb = Chroma(
     persist_directory="./school_index",
     embedding_function=embedding_model
 )
 
+# LLM (Groq)
 llm = ChatGroq(
-    groq_api_key=os.environ["GROQ_API_KEY"],
+    groq_api_key=GROQ_API_KEY,
     model_name="llama3-8b-8192"
 )
 
 app = Flask(__name__)
 
-
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
+# Question answering with reranking
 def ask_question_with_rerank(query, top_k=8, final_k=3):
+    # Step 1: Retrieve candidate documents
     retriever = vectordb.as_retriever(search_type="mmr", search_kwargs={"k": top_k})
     docs = retriever.get_relevant_documents(query)
 
-   
-    query_embedding = embedding_model.embed_query(query)
+    if not docs:
+        return "❌ Sorry, I couldn’t find anything relevant."
 
- 
+    # Step 2: Embed query + documents
+    query_embedding = embedding_model.embed_query(query)
+    doc_embeddings = embedding_model.embed_documents([doc.page_content for doc in docs])
+
+    # Step 3: Score docs by cosine similarity
     scored_docs = []
-    for doc in docs:
-        doc_embedding = embedding_model.embed_query(doc.page_content)
-        score = cosine_similarity(query_embedding, doc_embedding)
+    for doc, emb in zip(docs, doc_embeddings):
+        score = cosine_similarity(query_embedding, emb)
         scored_docs.append((score, doc))
 
- 
+    # Step 4: Pick top reranked documents
     top_docs = [doc for _, doc in sorted(scored_docs, key=lambda x: x[0], reverse=True)[:final_k]]
-    rerank_chain = RetrievalQA.from_chain_type(
-        llm=llm,
-        retriever=retriever,
-        return_source_documents=True
-    )
 
-    result = rerank_chain.combine_documents_chain.run(
-        {"input_documents": top_docs, "question": query}
-    )
-    return result
+    # Step 5: Build final context string for Groq
+    context = "\n\n".join([doc.page_content for doc in top_docs])
+
+    # Step 6: Ask Groq with context
+    prompt = f"""
+    You are a helpful assistant for university rules.
+    Use ONLY the following context to answer the question.
+    
+    Context:
+    {context}
+    
+    Question: {query}
+    Answer:
+    """
+    response = llm.invoke(prompt)
+
+    return response.content.strip()
+
+
+

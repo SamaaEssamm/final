@@ -1,4 +1,4 @@
-Asyout University
+Assuit University
 Computer and Information College
 The internal regulations
 For a bachelor's degree with the approved hours system
@@ -38,8 +38,8 @@ Computer and Information College includes the following departments:
 • It is supervised by the multimedia program
 It is permissible for other departments to be established in the college in the future in accordance with the provisions of the Universities Regulatory Law.
 Computer Science Department
-It includes the following scientific fields: computer programming and computer languages concepts and translations - data structures - analysis and design of algorithms - computers operating systems - environment and organization of computers - data encryption and computer security - data pressure - software engineering - artificial intelligence - smart systems - expert systems - image processing - natural languages processing - multiple agents systems - knowledge rules systems - processing on parallelDistributed
-Smart - Computer Teaching - Identification of Models - Human Communication Methods - Computer Vision - Computer Drawing Systems - Calculate Computers.
+It includes the following scientific fields: computer programming and computer languages concepts and translations - data structures - analysis and design of algorithms - computers operating systems - environment and organization of computers - data encryption and computer security - data pressure - software engineering - artificial intelligence - smart systems - expert systems - image processing - natural languages processing - multiple agents systems - knowledge rules systems - processing on parallel  Distributed - 
+Computer Teaching - Identification of Models - Human Communication Methods - Computer Vision - Computer Drawing Systems - Calculate Computers.
 Information Systems Department
 It includes the following scientific fields: Information Systems Analysis and Design - Information Systems Evolution methodologies - architecture Information - Information Storage and Recover Systems - Database Systems - Information Systems - Administrative Information Systems - Geographical information - multimedia information systems - Distributed information systems - smart information systems - Discovering knowledge in rules system - Data - Databases - Information Systems Economics - Excavation in Data - data warehouses - information centers management - integrated information systems - methodology of information systems development - confirmation of software quality and information systems - information systems applications in various fields - network information systems.
 Information Technology Department
@@ -79,8 +79,6 @@ It is permissible for Yion Nak a summer semester according to the nature of the 
 Graduation is at the end of
 A semester, so the graduation roles will be:
 Graduation at the end of the first semester (January).
-The internal regulations of the Bachelor's degree with an accredited hours system 7
-Computer and Information College - Assiut University
 Graduation at the end of the second semester (June).
 • Graduation at the end of the summer semester (September Play).
 == Article (8) == Registration, Deletion and Addition
@@ -117,7 +115,7 @@ for.The student may discontinue the study - with an acceptable excuse - two or t
 C.The student may submit an application to stop the registration altogether according to the conditions and controls set by the university.
 == Article (13) == Examination System
 A.The Great Class Night is 1
-00 degrees and distributed as follows:
+- degrees and distributed as follows:
 1. 50 degrees specialized for semester study and distributed as follows:
 25 degrees for periodic choices conducted by the professor periodically, practical applications or works that students wrapped during the semester.
 25 degrees for the mid -semester exam.
@@ -133,18 +131,17 @@ Wealth.
 E.The student - academically - warns his cumulative average in any semester to less than 2.0.And it is permissible for the night council to give the student an exceptional and final opportunity to raise his cumulative rate.The cumulative rate is calculated according to Article No. (14).
 == Article (14) == Evaluation System
 A.The college follows the approved hours system, which depends on the fact that the basic unit is the course, not the academic year, and the evaluation system on the basis of estimation in a system of points, which determines according to the following table:
-Descriptive appreciation points estimate the percentage of degree
-Excellent 4.0 A %90 or more
-3.7 A %85 - Less than 90 %
-Very good 3.3 b+ 80 % - less than 85 %
-3.0 B %75 - Less than 80 %
-Good 2.7 b %70 - less than 75 %
-2.3 C+ %65 - less than 70 %
-Acceptable 2.0 C 60 - less than 65 %
-Conditional acceptable 1.7 %55 - less than 60 %
-1.3 D+ %50 % - less than 55 %
-1.0 D %45 - less than 50 %
-Zero F is less than 45%
+Excellent: GPA 4.0, Letter A, Percentage 90% and above
+Excellent: GPA 3.7, Letter A-, Percentage 85% to less than 90%
+Very Good: GPA 3.3, Letter B+, Percentage 80% to less than 85%
+Very Good: GPA 3.0, Letter B, Percentage 75% to less than 80%
+Good: GPA 2.7, Letter B-, Percentage 70% to less than 75%
+Good: GPA 2.3, Letter C+, Percentage 65% to less than 70%
+Acceptable: GPA 2.0, Letter C, Percentage 60% to less than 65%
+Conditional Acceptable: GPA 1.7, Letter C-, Percentage 55% to less than 60%
+Conditional Acceptable: GPA 1.3, Letter D+, Percentage 50% to less than 55%
+Conditional Acceptable: GPA 1.0, Letter D, Percentage 45% to less than 50%
+Fail: GPA 0.0, Letter F, Percentage below 45%
 The student is considered successful in the course if he gets at least an average of 1.0.
 In the event that the student gets a conditional acceptable estimate, he must obtain a cumulative rate of more than 2.0, otherwise he will be placed under academic observation (see Article 17) and is exposed to the semester of the college.
 for.Accounting the cumulative average
@@ -156,20 +153,19 @@ The hours registered for the student to get the cumulative rate as follows:
 Total points
 GPA =
 Total registered watches
-C.General appreciation account
+C.General appreciation account (GPA)
 The general estimate of the student is calculated based on the cumulative average according to the following table:
-Descriptive appreciation, a modified cumulative estimate
-Excellent success estimates a 4.0
-A from 3.7 to less than 4.0
-Very good B+ from 3.3 to less than 3.7
-B from 3.0 to less than 3.3
-Good B from 2.7 to less than 3.0
-C+ from 2.3 to less than 2.7
-Acceptable C from 2.0 to less than 2.3
-Poor failure estates C from 1.7 to less than 2.0
-D+ from 1.3 to less than 1.7
-D from 1.0 to less than 1.3
-Very weak F from 0.0 to less than 1.0
+Excellent: GPA 4.0, Letter A, Percentage 90% and above (passed)
+Excellent: GPA 3.7, Letter A-, Percentage 85% to less than 90% (passed)
+Very Good: GPA 3.3, Letter B+, Percentage 80% to less than 85% (passed)
+Very Good: GPA 3.0, Letter B, Percentage 75% to less than 80% (passed)
+Good: GPA 2.7, Letter B-, Percentage 70% to less than 75% (passed)
+Good: GPA 2.3, Letter C+, Percentage 65% to less than 70% (passed)
+Accepted: GPA 2.0, Letter C, Percentage 60% to less than 65% (passed)
+Weak: GPA 1.7, Letter C-, Percentage 55% to less than 60% (failed)
+Weak: GPA 1.3, Letter D+, Percentage 50% to less than 55% (failed)
+Weak: GPA 1.0, Letter D, Percentage 45% to less than 50% (failed)
+Very Weak: GPA 0.0, Letter F, Percentage below 45% (failed)
 D.The student is granted honors if he passes to all the units he studied at a cumulative rate of at least 3.0, provided that the study period does not exceed four academic years and that Yyon has not failed in any course.
 E.The student is considered successful in the general estimate if he gets a cumulative rate at least 2.0.
 == Article (15) == Foundation and Return

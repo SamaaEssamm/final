@@ -14,6 +14,7 @@ from models import NotificationModel, ComplaintModel, SuggestionModel, ChatMessa
 from chatbot_api import ask_question_with_rerank
 from email_utils import send_notification_email
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 
@@ -21,10 +22,8 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 app = Flask(__name__, static_folder='static')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ghada:ghada@localhost:5432/complaint_app'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['APP_PASSWORD'] = os.getenv('APP_PASSWORD')
 
 
 db.init_app(app)
@@ -77,7 +76,7 @@ api.add_resource(Users, '/api/addusers/')
 @app.route("/")
 def home():
     return '<h1>HI</h1>'
-import re
+
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -950,6 +949,7 @@ def close_session():
     session.session_status = SessionStatus.close
     db.session.commit()
     return jsonify({"status": "closed"})
+    
 @app.route("/api/chat/sessions", methods=["GET"])
 def get_chat_sessions():
     email = request.args.get("email")
