@@ -7,8 +7,9 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 
 # Load the full rules text
 
-rules_path = os.path.join(os.path.dirname(__file__), "Internal_Regulation_EN.txt")
-rules_text = open(rules_path, encoding="utf-8").read()
+base_dir = os.path.dirname(os.path.abspath(__file__))
+rules_file = os.path.join(base_dir, "Internal_Regulation_EN.txt")
+rules_text = open(rules_file, encoding="utf-8").read()
 
 
 def ask_rule_question(question):
