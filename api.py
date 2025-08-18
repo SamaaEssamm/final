@@ -75,7 +75,8 @@ api.add_resource(Users, '/api/addusers/')
 
 @app.route("/")
 def home():
-    return '<h1>HI</h1>'
+    return "Flask API is running!"
+
 
 @app.route("/api/login", methods=["POST"])
 def login():
