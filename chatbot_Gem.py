@@ -1,7 +1,7 @@
 import google.generativeai as genai
 import os
 
-genai.configure(api_key="your_gemini_key")
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 
@@ -10,12 +10,12 @@ rules_text = open("Internal_Regulation_EN.txt", encoding="utf-8").read()
 
 def ask_rule_question(question):
     prompt = f"""
-You are a university assistant. You must answer using only the following university rules:
+You are a university assistant. :
 
 {rules_text}
 
 Question: {question}
-Answer:
+
 """
     response = model.generate_content(prompt)
     return response.text.strip()

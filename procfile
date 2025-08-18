@@ -1,1 +1,0 @@
-web: genicorn api:app
