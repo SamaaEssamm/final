@@ -44,7 +44,7 @@ const toggleMenu = (sessionId: string) => {
   useEffect(() => {
   if (!userEmail) return;
 
-  fetch(`http://localhost:5000/api/chat/sessions?email=${encodeURIComponent(userEmail)}`)
+  fetch(`http://web-production-93bbb.up.railway.app/api/chat/sessions?email=${encodeURIComponent(userEmail)}`)
     .then(res => res.json())
     .then(data => {
       setSessions(data);
@@ -64,23 +64,23 @@ const toggleMenu = (sessionId: string) => {
 const handleRename = async (sessionId: string) => {
   const newTitle = prompt("Enter new chat title:");
   if (!newTitle) return;
-  await fetch(`http://localhost:5000/api/chat/rename_session`, {
+  await fetch(`http://web-production-93bbb.up.railway.app/api/chat/rename_session`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ session_id: sessionId, title: newTitle }),
   });
-  const updated = await fetch(`http://localhost:5000/api/chat/sessions?email=${userEmail}`).then(res => res.json());
+  const updated = await fetch(`http://web-production-93bbb.up.railway.app/api/chat/sessions?email=${userEmail}`).then(res => res.json());
   setSessions(updated);
 };
 
 const handleDelete = async (sessionId: string) => {
   if (!confirm("Are you sure you want to delete this chat?")) return;
-  await fetch(`http://localhost:5000/api/chat/delete_session`, {
+  await fetch(`http://web-production-93bbb.up.railway.app/api/chat/delete_session`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ session_id: sessionId }),
   });
-  const updated = await fetch(`http://localhost:5000/api/chat/sessions?email=${userEmail}`).then(res => res.json());
+  const updated = await fetch(`http://web-production-93bbb.up.railway.app/api/chat/sessions?email=${userEmail}`).then(res => res.json());
   setSessions(updated);
   if (selectedSession === sessionId) setSelectedSession(null);
 };
@@ -89,14 +89,14 @@ const handleDelete = async (sessionId: string) => {
   useEffect(() => {
     if (!selectedSession) return;
 
-    fetch(`http://localhost:5000/api/chat/messages?session_id=${selectedSession}`)
+    fetch(`http://web-production-93bbb.up.railway.app/api/chat/messages?session_id=${selectedSession}`)
       .then(res => res.json())
       .then(data => setMessages(data));
   }, [selectedSession]);
 
  
   const startNewChat = async () => {
-    const res = await fetch('http://localhost:5000/api/chat/start_session', {
+    const res = await fetch('http://web-production-93bbb.up.railway.app/api/chat/start_session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: userEmail, message: 'New chat started' }),
@@ -106,7 +106,7 @@ const handleDelete = async (sessionId: string) => {
     setSelectedSession(newSession.session_id);
     setMessages([{ sender: 'user', text: 'New chat started' }]);
 
-    const updated = await fetch(`http://localhost:5000/api/chat/sessions?email=${userEmail}`).then(res => res.json());
+    const updated = await fetch(`http://web-production-93bbb.up.railway.app/api/chat/sessions?email=${userEmail}`).then(res => res.json());
     setSessions(updated);
   };
 
@@ -123,7 +123,7 @@ const handleDelete = async (sessionId: string) => {
     setNewMessage('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/chat/ask', {
+      const res = await fetch('http://web-production-93bbb.up.railway.app/api/chat/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -143,7 +143,7 @@ const handleDelete = async (sessionId: string) => {
         setMessages(prev => [...prev, botMsg]);
 
     
-        const updated = await fetch(`http://localhost:5000/api/chat/sessions?email=${userEmail}`).then(res => res.json());
+        const updated = await fetch(`http://web-production-93bbb.up.railway.app/api/chat/sessions?email=${userEmail}`).then(res => res.json());
         setSessions(updated);
       } else {
         console.error('Bot error:', data.error);

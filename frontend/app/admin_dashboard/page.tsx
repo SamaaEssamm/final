@@ -12,7 +12,7 @@ export default function AdminDashboard() {
   const handleNotificationClick = (notification: Notification) => {
   if (!notification.is_read) {
     // اعمل له تحديث في قاعدة البيانات إنه مقروء
-    fetch('http://localhost:5000/api/admin/mark_notification_read', {
+    fetch('http://web-production-93bbb.up.railway.app/api/admin/mark_notification_read', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ notification_id: notification.id }) // محتاجة الـ id
@@ -47,7 +47,7 @@ useEffect(() => {
   const email = localStorage.getItem('admin_email');
   if (!email) return;
 
-  fetch(`http://localhost:5000/api/admin/notifications?admin_email=${encodeURIComponent(email)}`)
+  fetch(`http://web-production-93bbb.up.railway.app/api/admin/notifications?admin_email=${encodeURIComponent(email)}`)
     .then(res => res.json())
     .then(data => {
       if (Array.isArray(data)) {
@@ -75,7 +75,7 @@ useEffect(() => {
       }
  
     } else {
-      fetch(`http://localhost:5000/api/get_admin_name/${encodeURIComponent(email)}`)
+      fetch(`http://web-production-93bbb.up.railway.app/api/get_admin_name/${encodeURIComponent(email)}`)
         .then(res => res.json())
         .then(data => {
           if (data.name) {
@@ -168,7 +168,7 @@ useEffect(() => {
   <div
   key={i}
   onClick={async () => {
-  await fetch('http://localhost:5000/api/admin/mark_notification_read', {
+  await fetch('http://web-production-93bbb.up.railway.app/api/admin/mark_notification_read', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ notification_id: n.id }),

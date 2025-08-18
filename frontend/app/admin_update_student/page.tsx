@@ -22,7 +22,7 @@ export default function UpdateStudentPage() {
     const role = localStorage.getItem("role");
 if (role !== "admin") return;
     try {
-      const response = await fetch('http://localhost:5000/api/admin/update_student', {
+      const response = await fetch('http://web-production-93bbb.up.railway.app/api/admin/update_student', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

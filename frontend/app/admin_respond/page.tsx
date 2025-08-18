@@ -1,13 +1,18 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
-
+import { useState, useEffect } from 'react';
 export default function RespondPage() {
-  const params = useSearchParams();
-  const id = params.get('id');
+  
+const [id, setId] = useState<string | null>(null);
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  setId(params.get('id'));
+}, []);
+
   const router = useRouter();
 
   const [responseText, setResponseText] = useState<string>('');

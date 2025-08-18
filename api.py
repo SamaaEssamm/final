@@ -189,7 +189,8 @@ def create_complaint():
         full_path = os.path.join(file_path, filename)
         file.save(full_path)
 
-        file_url = f"http://localhost:5000/static/uploads/complaints/{filename}"
+        file_url = f"https://web-production-93bbb.up.railway.app/static/uploads/complaints/{filename}"
+
         file_name = filename
 
     new_complaint = ComplaintModel(
@@ -288,7 +289,8 @@ def create_suggestion():
         full_path = os.path.join(file_path, filename)
         file.save(full_path)
 
-        file_url = f"http://localhost:5000/static/uploads/suggestions/{filename}"
+        file_url = f"https://web-production-93bbb.up.railway.app/static/uploads/suggestions/{filename}"
+
         file_name = filename
 
     new_suggestion = SuggestionModel(
