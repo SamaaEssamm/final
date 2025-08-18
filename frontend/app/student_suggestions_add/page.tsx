@@ -85,7 +85,7 @@ export default function NewSuggestionPage() {
                 data.append('file', file);
             }
 
-            const res = await fetch('http://127.0.0.1:5000/api/student/addsuggestion', {
+            const res = await fetch('https://web-production-93bbb.up.railway.app/api/student/addsuggestion', {
                 method: 'POST',
                 body: data,
             });

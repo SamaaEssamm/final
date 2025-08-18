@@ -35,7 +35,7 @@ const [selectedStatus, setSelectedStatus] = useState("All");
   }
     const fetchsuggestions = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:5000/api/admin/get_all_suggestions');
+        const res = await fetch('https://web-production-93bbb.up.railway.app/api/admin/get_all_suggestions');
         const data = await res.json();
 
         if (Array.isArray(data)) {

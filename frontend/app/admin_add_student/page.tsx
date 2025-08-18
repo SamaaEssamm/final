@@ -27,7 +27,7 @@ export default function AdminAddStudentPage() {
   }
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/admin/add_student', {
+      const res = await fetch('https://web-production-93bbb.up.railway.app/api/admin/add_student', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

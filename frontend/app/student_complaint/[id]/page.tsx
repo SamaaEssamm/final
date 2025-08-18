@@ -31,7 +31,7 @@ export default function StudentComplaintDetails() {
     const fetchComplaint = async () => {
       try {
         const email = localStorage.getItem('student_email');
-        const res = await fetch(`http://127.0.0.1:5000/api/student/get_complaint?id=${id}&student_email=${email}`);
+        const res = await fetch(`https://web-production-93bbb.up.railway.app/api/student/get_complaint?id=${id}&student_email=${email}`);
 
         if (!res.ok) throw new Error('Failed to fetch complaint');
         const data = await res.json();

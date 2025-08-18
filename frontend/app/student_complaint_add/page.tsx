@@ -95,7 +95,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       data.append('file', file);
     }
 
-    const res = await fetch('http://127.0.0.1:5000/api/student/addcomplaint', {
+    const res = await fetch('https://web-production-93bbb.up.railway.app/api/student/addcomplaint', {
       method: 'POST',
       body: data,
     });

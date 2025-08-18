@@ -23,7 +23,7 @@ export default function DeleteStudentPage() {
   }
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/admin_delete_student', {
+      const res = await fetch('https://web-production-93bbb.up.railway.app/api/admin_delete_student', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

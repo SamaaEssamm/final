@@ -31,7 +31,7 @@ export default function SuggestionDetailsPage() {
       try {
 
         const email = localStorage.getItem("student_email");
-        const res = await fetch(`http://127.0.0.1:5000/api/student/getsuggestion?id=${id}&student_email=${email}`);
+        const res = await fetch(`https://web-production-93bbb.up.railway.app/api/student/getsuggestion?id=${id}&student_email=${email}`);
 
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();

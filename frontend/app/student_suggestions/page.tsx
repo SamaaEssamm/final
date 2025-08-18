@@ -38,7 +38,7 @@ export default function SuggestionsPage() {
                     return;
                 }
 
-                const res = await fetch(`http://127.0.0.1:5000/api/student/showsuggestions?student_email=${email}`);
+                const res = await fetch(`https://web-production-93bbb.up.railway.app/api/student/showsuggestions?student_email=${email}`);
                 const data = await res.json();
 
                 if (Array.isArray(data)) {

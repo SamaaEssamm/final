@@ -63,7 +63,7 @@ useEffect(() => {
     setSubmitting(true);
 
     try {
-      const idRes = await fetch(`http://127.0.0.1:5000/api/get_admin_id?admin_email=${adminEmail}`);
+      const idRes = await fetch(`https://web-production-93bbb.up.railway.app/api/get_admin_id?admin_email=${adminEmail}`);
       const idData = await idRes.json();
       const adminId = idData.status === 'success' ? idData.admin_id : null;
 
@@ -74,7 +74,7 @@ useEffect(() => {
       }
 
    
-      const res = await fetch('http://127.0.0.1:5000/api/admin/respond', {
+      const res = await fetch('https://web-production-93bbb.up.railway.app/api/admin/respond', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -86,7 +86,7 @@ useEffect(() => {
 
       const result = await res.json();
       if (result.status === 'success') {
-        await fetch('http://127.0.0.1:5000/api/admin/update_status', {
+        await fetch('https://web-production-93bbb.up.railway.app/api/admin/update_status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ complaint_id: id, new_status: 'done' })

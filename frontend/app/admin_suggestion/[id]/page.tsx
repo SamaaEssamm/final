@@ -20,7 +20,7 @@ export default function suggestionDetailsPage() {
     if (!id || !status) return;
 
     try {
-      const res = await fetch(`http://web-production-93bbb.up.railway.app/api/admin/update_suggestion_status`, {
+      const res = await fetch(`https://web-production-93bbb.up.railway.app/api/admin/update_suggestion_status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ suggestion_id: id, new_status: status }),
@@ -53,7 +53,7 @@ export default function suggestionDetailsPage() {
     
     const fetchSuggestion = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:5000/api/admin/get_suggestion?id=${id}`);
+        const res = await fetch(`https://web-production-93bbb.up.railway.app/api/admin/get_suggestion?id=${id}`);
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
         setSuggestion(data);

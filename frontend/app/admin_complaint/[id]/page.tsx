@@ -26,7 +26,7 @@ export default function ComplaintDetailsPage() {
 
     const fetchComplaint = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:5000/api/admin/get_complaint?id=${id}`);
+        const res = await fetch(`https://web-production-93bbb.up.railway.app/api/admin/get_complaint?id=${id}`);
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
         setComplaint(data);
@@ -55,7 +55,7 @@ export default function ComplaintDetailsPage() {
     setUpdating(true);
     setStatusMessage('');
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/admin/update_status`, {
+      const res = await fetch(`https://web-production-93bbb.up.railway.app/api/admin/update_status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ complaint_id: id, new_status: status })

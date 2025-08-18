@@ -25,7 +25,7 @@ export default function ManageStudentsPage() {
   }
     const fetchStudents = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:5000/api/admin/get_all_students');
+        const res = await fetch('https://web-production-93bbb.up.railway.app/api/admin/get_all_students');
         const data = await res.json();
 
         if (Array.isArray(data)) {
