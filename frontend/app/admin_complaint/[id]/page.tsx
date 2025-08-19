@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { FaArrowLeft, FaArrowRight} from "react-icons/fa";
+import { FaArrowLeft, FaPaperclip, FaClock, FaUser, FaUserShield, FaEnvelope, FaExclamationCircle, FaCheckCircle, FaEdit, FaSync } from "react-icons/fa";
+
 export default function ComplaintDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
-
+  const api = process.env.NEXT_PUBLIC_API_URL;
   const [complaint, setComplaint] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('');
@@ -18,15 +19,15 @@ export default function ComplaintDetailsPage() {
   useEffect(() => {
     if (!id) return;
   
-  const role = localStorage.getItem("role");
-  if (role !== "admin") {
-    router.push("/no-access");
-    return;
-  }
+    const role = localStorage.getItem("role");
+    if (role !== "admin") {
+      router.push("/no-access");
+      return;
+    }
 
     const fetchComplaint = async () => {
       try {
-        const res = await fetch(`https://web-production-93bbb.up.railway.app/api/admin/get_complaint?id=${id}`);
+        const res = await fetch(`${api}/api/admin/get_complaint?id=${id}`);
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
         setComplaint(data);
@@ -55,7 +56,7 @@ export default function ComplaintDetailsPage() {
     setUpdating(true);
     setStatusMessage('');
     try {
-      const res = await fetch(`https://web-production-93bbb.up.railway.app/api/admin/update_status`, {
+      const res = await fetch(`${api}/api/admin/update_status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ complaint_id: id, new_status: status })
@@ -66,6 +67,9 @@ export default function ComplaintDetailsPage() {
         setComplaint({ ...complaint, complaint_status: status });
         setStatusMessage('Status updated successfully!');
         setStatusColor('text-green-600');
+        
+        // Clear message after 3 seconds
+        setTimeout(() => setStatusMessage(''), 3000);
       } else {
         setStatusMessage('Failed to update status.');
         setStatusColor('text-red-600');
@@ -84,7 +88,6 @@ export default function ComplaintDetailsPage() {
       router.push(`/admin_respond?id=${id}`);
     }
   };
-  
 
   const statusMap: Record<string, string> = {
     under_checking: 'Received',
@@ -100,138 +103,255 @@ export default function ComplaintDetailsPage() {
     IT: 'IT'
   };
 
-  if (loading) return <p className="p-6">Loading...</p>;
-  if (!complaint) return <p className="p-6 text-red-600">Complaint not found.</p>;
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'under_checking': return 'bg-blue-100 text-blue-800';
+      case 'under_review': return 'bg-purple-100 text-purple-800';
+      case 'in_progress': return 'bg-orange-100 text-orange-800';
+      case 'done': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-blue-800">Loading complaint details...</p>
+      </div>
+    </div>
+  );
+
+  if (!complaint) return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="text-center p-8 bg-white rounded-2xl shadow-lg">
+        <FaExclamationCircle className="text-red-500 text-4xl mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-red-700 mb-2">Complaint Not Found</h2>
+        <p className="text-gray-600 mb-4">The requested complaint could not be found.</p>
+        <button
+          onClick={() => router.push('/admin_manage_complaints')}
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Back to Complaints
+        </button>
+      </div>
+    </div>
+  );
 
   const isResponded = complaint.complaint_status === 'done';
 
   return (
-
-    <div className="min-h-screen bg-white py-10 px-6 md:px-12 lg:px-24">
-      <h1 className="text-3xl font-bold text-[#003087] mb-6">Complaint Details</h1>
-
-      <div className="bg-gray-50 border rounded-xl p-6 shadow space-y-3">
-
-        <p><span className="font-semibold">Complaint code:</span> {complaint.reference_code}</p>
-        <p><span className="font-semibold">Title:</span> {complaint.complaint_title}</p>
-        <p><span className="font-semibold">Department:</span> {typeMap[complaint.complaint_type] || complaint.complaint_type}</p>
-
-        <p>
-          <span className="font-semibold">Date:</span>{' '}
-          {complaint.complaint_created_at
-            ? new Date(complaint.complaint_created_at).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })
-            : 'Unknown'}
-        </p>
-        <p><span className="font-semibold">Student:</span> {complaint.student_email}</p>
-
-
-        <p><span className="font-semibold">Status:</span> {statusMap[complaint.complaint_status] || complaint.complaint_status}</p>
-
-        <div className="mt-4">
-          <span className="font-semibold block mb-1">Message:</span>
-          <div className="whitespace-pre-wrap bg-white border border-gray-200 rounded-lg p-4 max-h-[500px] overflow-auto">
-            {complaint.complaint_message}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-blue-900 flex items-center">
+              <FaExclamationCircle className="mr-3 text-blue-600" />
+              Complaint Details
+            </h1>
+            <p className="text-blue-600 mt-1">Reference: #{complaint.reference_code}</p>
           </div>
-        </div>
-               {complaint.complaint_file_url && (
-        <div className="mt-4">
-          <span className="font-semibold block mb-1">Attachment:</span>
-          <a
-            href={complaint.complaint_file_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 underline hover:text-blue-800"
-          >
-            View Attachment
-          </a>
-        </div>
-      )}
-        <div className="mt-6">
-          <label htmlFor="status" className="block font-semibold mb-1">Change Status:</label>
-          <select
-            id="status"
-            value={status}
-            onChange={handleStatusChange}
-            disabled={status === 'done'}
-            className={`border rounded px-3 py-1 mr-2 ${status === 'done' ? 'bg-gray-200 text-gray-600 cursor-not-allowed' : ''}`}
-          >
-            <option value="">-- Select status --</option>
-            <option value="under_review">Under Review</option>
-            <option value="in_progress">In Progress</option>
-          </select>
-
-
-          
-
-        <button
-  onClick={() => router.push('/admin_manage_complaints')}
-  title="Back"
-  className="fixed bottom-6 left-6 rounded-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
->
-  <FaArrowLeft size={26} />
-</button>
-
-
-
           <button
-            onClick={handleUpdateStatus}
-            disabled={updating || status === 'done' || !status}
-            className={`px-4 py-1 rounded mr-2 text-white ${status === 'done' || !status ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#003087] hover:bg-blue-800'}`}
+            onClick={() => router.push('/admin_manage_complaints')}
+            className="flex items-center bg-white text-blue-600 px-4 py-2 rounded-lg shadow hover:shadow-md transition-shadow border border-blue-200"
           >
-            {updating ? 'Updating...' : 'Update'}
+            <FaArrowLeft className="mr-2" />
+            Back to List
           </button>
-
-          {!complaint.response_message && (
-            <button
-              onClick={handleRespond}
-              className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
-            >
-              Respond
-            </button>
-
-          )}
-
-          {status === 'done' && (
-            <p className="mt-2 text-sm text-gray-700 font-medium">
-              This complaint has been responded to. You cannot change its status.
-            </p>
-          )}
-
-          {statusMessage && (
-            <p className={`mt-2 font-medium ${statusColor}`}>{statusMessage}</p>
-          )}
         </div>
 
-        <div className="mt-6">
-          <span className="font-semibold block mb-1">Admin Response:</span>
-          <div className="bg-white border border-gray-200 rounded-lg p-4 whitespace-pre-wrap">
-            {complaint.response_message ? (
-              <>
-                <p className="mb-2">{complaint.response_message}</p>
-                <p className="text-sm text-gray-600 mt-2">
-                  Responded by <span className="font-medium">{complaint.responder_name || 'Unknown Admin'}</span>{' '}
-                  on{' '}
-                  {complaint.response_created_at
-                    ? new Date(complaint.response_created_at).toLocaleString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                      })
-                    : 'Unknown Date'}
-                </p>
-              </>
-            ) : (
-              "You still didn't respond to this complaint."
+        {/* Main Content */}
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          {/* Status Banner */}
+          <div className={`px-6 py-4 border-b ${getStatusColor(complaint.complaint_status)}`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                {isResponded ? (
+                  <FaCheckCircle className="text-green-500" />
+                ) : (
+                  <FaClock className="text-blue-500" />
+                )}
+                <span className="ml-2 font-semibold">
+                  {statusMap[complaint.complaint_status] || complaint.complaint_status}
+                </span>
+              </div>
+              <span className="text-sm">
+                {complaint.complaint_created_at
+                  ? new Date(complaint.complaint_created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })
+                  : 'Unknown date'}
+              </span>
+            </div>
+          </div>
+
+          <div className="p-6 space-y-6">
+            {/* Complaint Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-blue-800 mb-2 flex items-center">
+                  <FaUser className="mr-2" />
+                  Student Information
+                </h3>
+                <div className="space-y-2">
+                  <p><span className="font-medium">Email:</span> {complaint.student_email}</p>
+                  <p><span className="font-medium">Name Display:</span>{' '}
+                    <span className={`inline-flex items-center ${complaint.complaint_dep === "public" ? "text-green-600" : "text-blue-600"}`}>
+                      {complaint.complaint_dep === "public" ? (
+                        <>
+                          <FaUserShield className="mr-1" /> Hidden
+                        </>
+                      ) : (
+                        <>
+                          <FaUser className="mr-1" /> Shown
+                        </>
+                      )}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
+                  <FaExclamationCircle className="mr-2" />
+                  Complaint Details
+                </h3>
+                <div className="space-y-2">
+                  <p><span className="font-medium">Department:</span> {typeMap[complaint.complaint_type] || complaint.complaint_type}</p>
+                  <p><span className="font-medium">Title:</span> {complaint.complaint_title}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Complaint Message */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="font-semibold text-gray-800 mb-4 flex items-center">
+                <FaEnvelope className="mr-2 text-blue-600" />
+                Complaint Message
+              </h3>
+              <div className="prose max-w-none bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
+                {complaint.complaint_message}
+              </div>
+            </div>
+
+            {/* Attachment */}
+            {complaint.complaint_file_url && (
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="font-semibold text-gray-800 mb-4 flex items-center">
+                  <FaPaperclip className="mr-2 text-blue-600" />
+                  Attachment
+                </h3>
+                <a
+                  href={complaint.complaint_file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center bg-blue-100 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors"
+                >
+                  <FaPaperclip className="mr-2" />
+                  View Attached File
+                </a>
+              </div>
             )}
+
+            {/* Status Update Section */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="font-semibold text-gray-800 mb-4 flex items-center">
+                <FaSync className="mr-2 text-blue-600" />
+                Update Status
+              </h3>
+              
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <select
+                  value={status}
+                  onChange={handleStatusChange}
+                  disabled={isResponded || updating}
+                  className={`border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    isResponded ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : ''
+                  }`}
+                >
+                  <option value="">-- Select status --</option>
+                  <option value="under_review">Under Review</option>
+                  <option value="in_progress">In Progress</option>
+                </select>
+
+                <button
+                  onClick={handleUpdateStatus}
+                  disabled={updating || isResponded || !status}
+                  className={`px-6 py-2 rounded-lg text-white font-medium ${
+                    isResponded || !status ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  {updating ? 'Updating...' : 'Update Status'}
+                </button>
+
+                {!complaint.response_message && (
+                  <button
+                    onClick={handleRespond}
+                    className="px-6 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 flex items-center"
+                  >
+                    <FaEdit className="mr-2" />
+                    Respond
+                  </button>
+                )}
+              </div>
+
+              {statusMessage && (
+                <p className={`mt-3 font-medium ${statusColor}`}>{statusMessage}</p>
+              )}
+
+              {isResponded && (
+                <p className="mt-3 text-sm text-gray-600">
+                  This complaint has been responded to. You cannot change its status.
+                </p>
+              )}
+            </div>
+
+            {/* Admin Response */}
+            <div className={`border rounded-lg p-6 ${complaint.response_message ? 'bg-yellow-50 border-yellow-200' : 'bg-gray-50 border-gray-200'}`}>
+              <h3 className="font-semibold mb-4 flex items-center">
+                {complaint.response_message ? (
+                  <FaCheckCircle className="mr-2 text-green-600" />
+                ) : (
+                  <FaClock className="mr-2 text-gray-600" />
+                )}
+                Admin Response
+              </h3>
+              
+              {complaint.response_message ? (
+                <div className="prose max-w-none bg-white p-4 rounded-lg border border-yellow-200 whitespace-pre-wrap">
+                  {complaint.response_message}
+                  {complaint.responder_email && (
+                    <p className="text-sm text-gray-600 mt-3">
+                      Responded by: {complaint.responder_email}
+                      {complaint.response_created_at && (
+                        <> on {new Date(complaint.response_created_at).toLocaleString()}</>
+                      )}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <FaClock className="text-gray-400 text-4xl mx-auto mb-4" />
+                  <p className="text-gray-600">No response has been sent yet.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
+        {/* Quick Actions */}
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={() => router.push('/admin_manage_complaints')}
+            className="flex items-center bg-white text-blue-600 px-6 py-3 rounded-lg shadow hover:shadow-md transition-shadow border border-blue-200"
+          >
+            <FaArrowLeft className="mr-2" />
+            Back to All Complaints
+          </button>
+        </div>
       </div>
     </div>
   );

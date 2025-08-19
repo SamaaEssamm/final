@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
+  const api = process.env.NEXT_PUBLIC_API_URL;
   const [studentName, setStudentName] = useState('Student');
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function Dashboard() {
   const handleNotificationClick = (notification: Notification) => {
   if (!notification.is_read) {
    
-    fetch('https://web-production-93bbb.up.railway.app/api/admin/mark_notification_read', {
+    fetch(`${api}/api/admin/mark_notification_read`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ notification_id: notification.id }) 
@@ -29,7 +30,7 @@ export default function Dashboard() {
 
 
   if (notification.complaint_id) {
-    router.push(`/student_complaint_details?id=${notification.complaint_id}`);
+    router.push(`${api}/student_complaint_details?id=${notification.complaint_id}`);
   }
 };
 
@@ -55,7 +56,7 @@ useEffect(() => {
     return; 
   }
    
-    fetch(`https://web-production-93bbb.up.railway.app/api/student/${encodeURIComponent(email)}`)
+    fetch(`${api}/api/student/${encodeURIComponent(email)}`)
       .then(res => res.json())
       .then(data => {
         if (data.name) {
@@ -70,7 +71,7 @@ useEffect(() => {
         setIsLoading(false);
       });
 
-    fetch(`https://web-production-93bbb.up.railway.app/api/student/notifications?student_email=${encodeURIComponent(email)}`)
+    fetch(`${api}/api/student/notifications?student_email=${encodeURIComponent(email)}`)
       .then(res => res.json())
       .then(data => {
         setNotifications(data);

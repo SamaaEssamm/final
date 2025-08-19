@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 export default function NoAccessPage() {
   const router = useRouter();
-
+  const api = process.env.NEXT_PUBLIC_API_URL;
   const handleRedirect = () => {
   const adminEmail = localStorage.getItem("admin_email");
   const studentEmail = localStorage.getItem("student_email");

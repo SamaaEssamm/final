@@ -6,6 +6,7 @@ from flask_cors import CORS
 from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 import os
 import uuid
 import base64
@@ -88,7 +89,9 @@ def login():
     if not email or not password:
         return jsonify({"message": "Email and password are required"}), 400
 
-    user = UserModel.query.filter_by(users_email=email).first()
+    user = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(email)
+    ).first()
 
     if not user or not check_password_hash(user.users_password, password):
         return jsonify({"message": "Invalid email or password"}), 401
@@ -105,16 +108,19 @@ def login():
 
     return jsonify({
         "message": "Login successful",
+        "email": user.users_email,
         "role": user.users_role.name
     }), 200  
 
 @app.route('/api/student/<email>', methods=['GET'])
 def get_student_by_email(email):
-    student = UserModel.query.filter_by(users_email=email).first()
+    student = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(email)
+    ).first()
     if student:
         return jsonify({
             'name': student.users_name,
-            'email': student.users_email
+            'email': student.users_email.lower()
         })
     else:
         return jsonify({'message': 'Student not found'}), 404
@@ -126,7 +132,9 @@ def get_complaints():
     if not student_email:
         return jsonify({"message": "Missing email"}), 400
 
-    user = UserModel.query.filter_by(users_email=student_email).first()
+    user = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(student_email)
+    ).first()
 
     if not user:
         return jsonify([]) 
@@ -149,7 +157,9 @@ def get_single_complaint():
     if not complaint_id or not student_email:
         return jsonify({"message": "Missing parameters"}), 400
 
-    user = UserModel.query.filter_by(users_email=student_email).first()
+    user = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(student_email)
+    ).first()
     if not user:
         return jsonify({"message": "Student not found"}), 404
 
@@ -169,7 +179,9 @@ def get_single_complaint():
 @app.route('/api/student/addcomplaint', methods=['POST'])
 def create_complaint():
     email = request.form.get('student_email')
-    user = UserModel.query.filter_by(users_email=email).first()
+    user = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(email)
+    ).first()
     if not user:
         return jsonify({"message": "User not found"}), 404
 
@@ -233,7 +245,9 @@ def get_suggestions():
     if not student_email:
         return jsonify({"message": "Missing email"}), 400
 
-    user = UserModel.query.filter_by(users_email=student_email).first()
+    user = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(student_email)
+    ).first()
     if not user:
         return jsonify([])
 
@@ -249,7 +263,9 @@ def get_student_suggestion():
     if not suggestion_id or not student_email:
         return jsonify({"message": "Missing parameters"}), 400
 
-    user = UserModel.query.filter_by(users_email=student_email).first()
+    user = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(student_email)
+    ).first()
     if not user:
         return jsonify({"message": "Student not found"}), 404
 
@@ -268,7 +284,9 @@ def get_student_suggestion():
 @app.route('/api/student/addsuggestion', methods=['POST'])
 def create_suggestion():
     email = request.form.get('student_email')
-    user = UserModel.query.filter_by(users_email=email).first()
+    user = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(email)
+    ).first()
     if not user:
         return jsonify({"message": "User not found"}), 404
 
@@ -371,7 +389,9 @@ def add_student():
     if not re.search(r"[A-Za-z]", password) or not re.search(r"[0-9]", password):
         return jsonify({'status': 'fail', 'message': 'Password must contain both letters and numbers'}), 400
 
-    existing_user = UserModel.query.filter_by(users_email=email).first()
+    existing_user = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(email)
+    ).first()
     if existing_user:
         return jsonify({'status': 'fail', 'message': 'Email already exists'}), 409
     
@@ -389,6 +409,29 @@ def add_student():
 
     return jsonify({'status': 'success', 'message': 'Student added successfully'})
 
+@app.route('/api/admin/get_student', methods=['POST'])
+def get_student():
+    data = request.get_json()
+    email = data.get('email')
+
+    if not email:
+        return jsonify({'status': 'fail', 'message': 'Email is required'}), 400
+
+    student = UserModel.query.filter(
+        func.lower(UserModel.users_email) == func.lower(email)
+    ).first()
+
+    if not student:
+        return jsonify({'status': 'fail', 'message': 'Student not found'}), 404
+
+    return jsonify({
+        'status': 'success',
+        'student': {
+            'name': student.users_name,
+            'email': student.users_email
+        }
+    })
+
 
 @app.route('/api/admin/update_student', methods=['PUT'])
 def update_student():
@@ -398,7 +441,9 @@ def update_student():
     new_password = data.get('new_password')
     new_email = data.get('new_email')
 
-    student = UserModel.query.filter_by(users_email=old_email).first()
+    student = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(old_email)
+    ).first()
     if not student:
         return jsonify({'status': 'fail', 'message': 'Student not found'}), 404
 
@@ -429,7 +474,9 @@ def delete_student():
     data = request.get_json()
     email = data.get('email')
 
-    student = UserModel.query.filter_by(users_email=email).first()
+    student = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(email)
+    ).first()
     if not student:
         return jsonify({'status': 'fail', 'message': 'Student not found'}), 404
 
@@ -468,6 +515,7 @@ def get_all_complaints():
         
     return jsonify(results)
 
+##########
 @app.route('/api/admin/get_complaint', methods=['GET'])
 def get_complaint_by_id():
     complaint_id = request.args.get("id")
