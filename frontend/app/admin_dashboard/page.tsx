@@ -1,12 +1,11 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaSignOutAlt, FaBell, FaExclamationCircle, FaLightbulb, FaUsers, FaChartBar, FaCog, FaEnvelope, FaClipboardList, FaComments } from 'react-icons/fa';
+import { FaSignOutAlt, FaBell, FaExclamationCircle, FaLightbulb, FaUsers, FaChartBar, FaCog, FaHome } from 'react-icons/fa';
 
 export default function AdminDashboard() {
   const [adminName, setAdminName] = useState('Admin');
   const [isLoading, setIsLoading] = useState(true);
-  const [statsError, setStatsError] = useState(false);
   const [stats, setStats] = useState({
     complaints: 0,
     suggestions: 0,
@@ -17,7 +16,6 @@ export default function AdminDashboard() {
   const redirected = useRef(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const api = process.env.NEXT_PUBLIC_API_URL;
 
   type Notification = {
     id: string;
@@ -29,12 +27,6 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role !== "admin") {
-      router.push("/no-access");
-      return;
-    }
-    
     const email = localStorage.getItem('admin_email');
     if (!email) { 
       if (!redirected.current) {
@@ -42,100 +34,91 @@ export default function AdminDashboard() {
         router.replace('/login');
       }
     } else {
-      // Fetch admin name
-      fetch(`${api}/api/get_admin_name/${encodeURIComponent(email)}`)
+      fetch(`http://localhost:5000/api/get_admin_name/${encodeURIComponent(email)}`)
         .then(res => res.json())
         .then(data => {
           if (data.name) {
             setAdminName(data.name);
           }
+          setIsLoading(false);
         })
         .catch(() => {
-          // Continue even if name fetch fails
-        });
-
-      // Fetch statistics with better error handling
-      fetch(`${api}/api/admin/dashboard_stats`)
-        .then(res => {
-          console.log("Response status:", res.status);
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-          return res.json();
-        })
-        .then(data => {
-          console.log("Stats data received:", data);
-          if (data && typeof data === 'object') {
-            setStats({
-              complaints: data.complaints || 0,
-              suggestions: data.suggestions || 0,
-              students: data.students || 0,
-              unreadNotifications: data.unreadNotifications || 0
-            });
-            setStatsError(false);
-          } else {
-            throw new Error("Invalid data format");
-          }
-        })
-        .catch(err => {
-          console.error("Failed to fetch stats:", err);
-          setStatsError(true);
-          // Set fallback data for development
-          setStats({
-            complaints: 15,
-            suggestions: 9,
-            students: 187,
-            unreadNotifications: 4
-          });
-        })
-        .finally(() => {
           setIsLoading(false);
         });
+
+      // Fetch statistics
+      fetchDashboardStats();
     }
-  }, [router, api]);
+  }, [router]);
+
+  // دالة منفصلة لجلب الإحصائيات
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/admin/dashboard_stats');
+      const data = await response.json();
+      
+      if (response.ok) {
+        console.log('Dashboard stats:', data);
+        setStats({
+          complaints: data.complaints || 0,
+          suggestions: data.suggestions || 0,
+          students: data.students || 0,
+          unreadNotifications: data.unreadNotifications || 0
+        });
+        console.log("Updated stats:", {
+          complaints: data.complaints || 0,
+          suggestions: data.suggestions || 0,
+          students: data.students || 0,
+          unreadNotifications: data.unreadNotifications || 0
+        })
+      } else {
+        console.error('Failed to fetch dashboard stats:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    }
+  };
 
   // Fetch notifications
   useEffect(() => {
     const email = localStorage.getItem('admin_email');
     if (!email) return;
 
-    fetch(`${api}/api/admin/notifications?admin_email=${encodeURIComponent(email)}`)
+    fetch(`http://localhost:5000/api/admin/notifications?admin_email=${encodeURIComponent(email)}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
           setNotifications(data);
+          // تحديث عدد الإشعارات غير المقروءة
+          const unreadCount = data.filter((n: Notification) => !n.is_read).length;
+          setStats(prev => ({ ...prev, unreadNotifications: unreadCount }));
         } else {
           console.error("Unexpected data format:", data);
         }
       })
       .catch(err => {
         console.error("Failed to fetch notifications:", err);
-        // Set demo notifications if API fails
-        setNotifications([
-          {
-            id: "1",
-            message: "System is using demo data. API endpoint not found.",
-            is_read: false,
-            created_at: new Date().toISOString()
-          }
-        ]);
       });
-  }, [api]);
+  }, []);
 
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.is_read) {
       try {
-        await fetch(`${api}/api/admin/mark_notification_read`, {
+        await fetch('http://localhost:5000/api/admin/mark_notification_read', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ notification_id: notification.id })
         });
         
+        // تحديث حالة الإشعار محلياً
         setNotifications(prev =>
           prev.map(n =>
-            n === notification ? { ...n, is_read: true } : n
+            n.id === notification.id ? { ...n, is_read: true } : n
           )
         );
+        
+        // تحديث العداد
+        setStats(prev => ({ ...prev, unreadNotifications: prev.unreadNotifications - 1 }));
       } catch (error) {
         console.error("Failed to mark notification as read:", error);
       }
@@ -146,11 +129,13 @@ export default function AdminDashboard() {
     } else if (notification.complaint_id) {
       router.push(`/admin_complaint/${notification.complaint_id}`);
     }
+    
+    // إغلاق قائمة الإشعارات بعد النقر
+    setShowNotifications(false);
   };
 
   const handleLogout = () => {
     localStorage.removeItem('admin_email');
-    localStorage.removeItem('role');
     router.push('/login');
   };
 
@@ -200,6 +185,9 @@ export default function AdminDashboard() {
               <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
                 <div className="p-4 border-b border-gray-200">
                   <h3 className="font-semibold text-blue-900">Notifications</h3>
+                  <span className="text-xs text-gray-500">
+                    {stats.unreadNotifications} unread
+                  </span>
                 </div>
                 <div className="divide-y divide-gray-100">
                   {notifications.length === 0 ? (
@@ -215,10 +203,19 @@ export default function AdminDashboard() {
                             : 'bg-blue-50 hover:bg-blue-100'
                         }`}
                       >
-                        <p className="text-sm font-medium text-gray-900">{notification.message}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(notification.created_at).toLocaleString()}
-                        </p>
+                        <div className="flex items-start">
+                          {!notification.is_read && (
+                            <span className="mt-1.5 mr-2 w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
+                          )}
+                          <div className="flex-1">
+                            <p className={`text-sm ${notification.is_read ? 'text-gray-700' : 'font-medium text-gray-900'}`}>
+                              {notification.message}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(notification.created_at).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     ))
                   )}
@@ -251,154 +248,119 @@ export default function AdminDashboard() {
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white mb-8 shadow-lg">
             <h1 className="text-3xl font-bold mb-2">Welcome back, {adminName}!</h1>
             <p className="text-blue-100">Here's what's happening with your platform today.</p>
-            {statsError && (
-              <div className="mt-4 p-3 bg-yellow-500 bg-opacity-20 rounded-lg">
-                <p className="text-yellow-200 text-sm">
-                  ⚠️ Showing demo data. Could not connect to server.
-                </p>
-              </div>
-            )}
+            <button 
+              onClick={fetchDashboardStats}
+              className="mt-4 text-sm bg-white text-blue-600 px-3 py-1 rounded-lg hover:bg-blue-50 transition-colors"
+            >
+              Refresh Stats
+            </button>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-2xl p-6 shadow-md border-l-4 border-blue-500">
-              <div className="flex items-center justify-between">
+          {/* Stats Cards - تم تعديلها لتصبح 3 بطاقات فقط */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* Complaints Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-blue-500 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Complaints</p>
-                  <p className="text-2xl font-bold text-blue-900">
-                    {stats.complaints}
-                    {statsError && <span className="text-xs text-red-500 ml-2">⚠️ Demo</span>}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total Complaints</p>
+                  <p className="text-3xl font-bold text-blue-900 mt-1">{stats.complaints}</p>
                 </div>
                 <div className="p-3 bg-blue-100 rounded-full">
-                  <FaExclamationCircle className="text-blue-600 text-xl" />
+                  <FaExclamationCircle className="text-blue-600 text-2xl" />
                 </div>
               </div>
               <button 
                 onClick={() => router.push('/admin_manage_complaints')}
-                className="mt-4 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
               >
-                View all →
+                View All Complaints
+                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                </svg>
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-md border-l-4 border-purple-500">
-              <div className="flex items-center justify-between">
+            {/* Suggestions Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-purple-500 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Suggestions</p>
-                  <p className="text-2xl font-bold text-purple-900">
-                    {stats.suggestions}
-                    {statsError && <span className="text-xs text-red-500 ml-2">⚠️ Demo</span>}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total Suggestions</p>
+                  <p className="text-3xl font-bold text-purple-900 mt-1">{stats.suggestions}</p>
                 </div>
                 <div className="p-3 bg-purple-100 rounded-full">
-                  <FaLightbulb className="text-purple-600 text-xl" />
+                  <FaLightbulb className="text-purple-600 text-2xl" />
                 </div>
               </div>
               <button 
                 onClick={() => router.push('/admin_manage_suggestions')}
-                className="mt-4 text-sm text-purple-600 hover:text-purple-800 font-medium"
+                className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center"
               >
-                View all →
+                View All Suggestions
+                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                </svg>
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-md border-l-4 border-green-500">
-              <div className="flex items-center justify-between">
+            {/* Students Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-green-500 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Registered Students</p>
-                  <p className="text-2xl font-bold text-green-900">
-                    {stats.students}
-                    {statsError && <span className="text-xs text-red-500 ml-2">⚠️ Demo</span>}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Registered Students</p>
+                  <p className="text-3xl font-bold text-green-900 mt-1">{stats.students}</p>
                 </div>
                 <div className="p-3 bg-green-100 rounded-full">
-                  <FaUsers className="text-green-600 text-xl" />
+                  <FaUsers className="text-green-600 text-2xl" />
                 </div>
               </div>
               <button 
                 onClick={() => router.push('/admin_manage_students')}
-                className="mt-4 text-sm text-green-600 hover:text-green-800 font-medium"
+                className="w-full bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center"
               >
-                Manage students →
-              </button>
-            </div>
-
-            <div className="bg-white rounded-2xl p-6 shadow-md border-l-4 border-red-500">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Unread Notifications</p>
-                  <p className="text-2xl font-bold text-red-900">
-                    {stats.unreadNotifications}
-                    {statsError && <span className="text-xs text-red-500 ml-2">⚠️ Demo</span>}
-                  </p>
-                </div>
-                <div className="p-3 bg-red-100 rounded-full">
-                  <FaBell className="text-red-600 text-xl" />
-                </div>
-              </div>
-              <button 
-                onClick={() => setShowNotifications(true)}
-                className="mt-4 text-sm text-red-600 hover:text-red-800 font-medium"
-              >
-                View notifications →
+                Manage Students
+                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                </svg>
               </button>
             </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="bg-white rounded-2xl p-6 shadow-md mb-8">
-            <h2 className="text-xl font-bold text-blue-900 mb-6">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Quick Actions - تم تحسين الشكل */}
+          <div className="bg-white rounded-2xl p-6 shadow-lg mb-8">
+            <h2 className="text-2xl font-bold text-blue-900 mb-6 text-center">Quick Actions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <button 
                 onClick={() => router.push('/admin_manage_complaints')}
-                className="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors"
+                className="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-blue-200"
               >
-                <div className="p-3 bg-blue-100 rounded-full mb-3">
-                  <FaExclamationCircle className="text-blue-600 text-xl" />
+                <div className="p-4 bg-blue-600 rounded-full mb-4 text-white">
+                  <FaExclamationCircle className="text-2xl" />
                 </div>
-                <span className="font-medium text-blue-900">Manage Complaints</span>
+                <span className="font-semibold text-blue-900 text-lg mb-2">Manage Complaints</span>
+                <p className="text-sm text-blue-700 text-center">View and respond to student complaints</p>
               </button>
 
               <button 
                 onClick={() => router.push('/admin_manage_suggestions')}
-                className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors"
+                className="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl hover:from-purple-100 hover:to-purple-200 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-purple-200"
               >
-                <div className="p-3 bg-purple-100 rounded-full mb-3">
-                  <FaLightbulb className="text-purple-600 text-xl" />
+                <div className="p-4 bg-purple-600 rounded-full mb-4 text-white">
+                  <FaLightbulb className="text-2xl" />
                 </div>
-                <span className="font-medium text-purple-900">Manage Suggestions</span>
+                <span className="font-semibold text-purple-900 text-lg mb-2">Manage Suggestions</span>
+                <p className="text-sm text-purple-700 text-center">Review and manage student suggestions</p>
               </button>
 
               <button 
                 onClick={() => router.push('/admin_manage_students')}
-                className="flex flex-col items-center justify-center p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors"
+                className="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl hover:from-green-100 hover:to-green-200 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-green-200"
               >
-                <div className="p-3 bg-green-100 rounded-full mb-3">
-                  <FaUsers className="text-green-600 text-xl" />
+                <div className="p-4 bg-green-600 rounded-full mb-4 text-white">
+                  <FaUsers className="text-2xl" />
                 </div>
-                <span className="font-medium text-green-900">Manage Students</span>
+                <span className="font-semibold text-green-900 text-lg mb-2">Manage Students</span>
+                <p className="text-sm text-green-700 text-center">View and manage student accounts</p>
               </button>
-
-              <button 
-                onClick={() => router.push('/admin_settings')}
-                className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
-              >
-                <div className="p-3 bg-gray-100 rounded-full mb-3">
-                  <FaCog className="text-gray-600 text-xl" />
-                </div>
-                <span className="font-medium text-gray-900">Settings</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Recent Activity (Placeholder) */}
-          <div className="bg-white rounded-2xl p-6 shadow-md">
-            <h2 className="text-xl font-bold text-blue-900 mb-6">Recent Activity</h2>
-            <div className="text-center py-10 text-gray-500">
-              <FaChartBar className="text-4xl mx-auto mb-4 text-gray-300" />
-              <p>Activity dashboard coming soon</p>
             </div>
           </div>
         </div>

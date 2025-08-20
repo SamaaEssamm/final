@@ -16,6 +16,7 @@ from chatbot_Gem import ask_rule_question
 from email_utils import send_notification_email
 from dotenv import load_dotenv
 import re
+import random
 
 load_dotenv()
 
@@ -111,7 +112,67 @@ def login():
         "email": user.users_email,
         "role": user.users_role.name
     }), 200  
+@app.route("/api/admin/dashboard_stats", methods=["GET"])
+def dashboard_stats():
+    try:
+        db.session.execute(text('SELECT 1'))  # connection check
 
+        complaints_count = db.session.execute(text("SELECT COUNT(*) FROM complaints")).scalar()
+        suggestions_count = db.session.execute(text("SELECT COUNT(*) FROM suggestions")).scalar()
+        students_count = db.session.execute(
+            text("SELECT COUNT(*) FROM users WHERE users_role = :role"),
+            {"role": "student"}
+        ).scalar()
+        unread_notifications_count = db.session.execute(
+            text("SELECT COUNT(*) FROM notifications WHERE notification_is_read = false")
+        ).scalar()
+
+        return jsonify({
+            "complaints": complaints_count,
+            "suggestions": suggestions_count,
+            "students": students_count,
+            "unreadNotifications": unread_notifications_count
+        }), 200
+
+    except Exception as e:
+        print(f"ERROR in dashboard_stats: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+@app.route("/api/student/dashboard_stats", methods=["GET"])
+def student_dashboard_stats():
+    try:
+        data = request.args  # استقبل user_id من الكويري
+        user_id = data.get("user_id")
+
+        if not user_id:
+            return jsonify({"error": "user_id is required"}), 400
+
+        # SELECT COUNT(*) للـ Complaints
+        complaints_count = db.session.execute(
+            text("SELECT COUNT(*) FROM complaints WHERE user_id = :uid"),
+            {"uid": user_id}
+        ).scalar()
+
+        # SELECT COUNT(*) للـ Suggestions
+        suggestions_count = db.session.execute(
+            text("SELECT COUNT(*) FROM suggestions WHERE user_id = :uid"),
+            {"uid": user_id}
+        ).scalar()
+
+        # SELECT COUNT(*) للـ Notifications (unread)
+        unread_notifications_count = db.session.execute(
+            text("SELECT COUNT(*) FROM notifications WHERE user_id = :uid AND notification_is_read = false"),
+            {"uid": user_id}
+        ).scalar()
+
+        return jsonify({
+            "complaints": complaints_count,
+            "suggestions": suggestions_count,
+            "unreadNotifications": unread_notifications_count
+        }), 200
+
+    except Exception as e:
+        print(f"ERROR in student_dashboard_stats: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 @app.route('/api/student/<email>', methods=['GET'])
 def get_student_by_email(email):
     student = UserModel.query.filter(
@@ -497,7 +558,6 @@ def get_all_complaints():
             student = UserModel.query.filter_by(users_id=c.sender_id).first()
             if student:
                 student_email = student.users_email
-                print(str(c.complaint_type.name))
 
         results.append({
             'complaint_id': c.complaint_id,
@@ -515,7 +575,6 @@ def get_all_complaints():
         
     return jsonify(results)
 
-##########
 @app.route('/api/admin/get_complaint', methods=['GET'])
 def get_complaint_by_id():
     complaint_id = request.args.get("id")
@@ -533,7 +592,6 @@ def get_complaint_by_id():
         admin = UserModel.query.get(complaint.responder_id)
         if admin:
             responder_name = admin.users_name
-    print(complaint.response_created_at )
  
     student_email = "Unknown"
     if complaint.complaint_dep and complaint.complaint_dep.name.lower() == "private":
@@ -619,7 +677,6 @@ def get_suggestion_by_id():
 
 
     })
-
 
 @app.route('/api/admin/update_suggestion_status', methods=['POST', 'OPTIONS'])
 def update_suggestion_status():
@@ -716,7 +773,9 @@ def respond_to_complaint():
 @app.route('/api/get_admin_id', methods=['GET'])
 def get_admin_id():
     admin_email = request.args.get("admin_email")
-    admin = UserModel.query.filter_by(users_email=admin_email).first()
+    admin = UserModel.query.filter(
+    func.lower(UserModel.users_email) == func.lower(admin_email)
+    ).first()
 
     if admin:
         return jsonify({
@@ -729,7 +788,8 @@ def get_admin_id():
 @app.route('/api/admin/notifications', methods=['GET'])
 def get_admin_notifications():
     email = request.args.get("admin_email")
-    admin = UserModel.query.filter_by(users_email=email, users_role='admin').first()
+    admin = UserModel.query.filter(    (func.lower(UserModel.users_email) == 
+    func.lower(email)) & (UserModel.users_role == 'admin')).first()
     if not admin:
         return jsonify([])
 
@@ -800,7 +860,8 @@ def mark_notification_read():
 @app.route('/api/student/notifications', methods=['GET'])
 def get_student_notifications():
     email = request.args.get("student_email")
-    student = UserModel.query.filter_by(users_email=email, users_role='student').first()
+    student = UserModel.query.filter((func.lower(UserModel.users_email) == 
+    func.lower(email)) & (UserModel.users_role == 'student')).first()
     if not student:
         return jsonify([])
 
@@ -849,7 +910,8 @@ def ask():
     if not question or not user_email:
         return jsonify({"error": "Missing question or user_email"}), 400
 
-    user = db.session.query(UserModel).filter_by(users_email=user_email).first()
+    user = db.session.query(UserModel).filter(func.lower(UserModel.users_email) == func.lower(user_email)).first()
+    
     if not user:
         return jsonify({"error": "User not found"}), 404
 
@@ -902,13 +964,26 @@ def ask():
 
     return jsonify({"answer": answer})
 
+@app.route("/api/chat/welcome", methods=["GET"])
+def get_welcome_message():
+    welcome_messages = [
+        "Hello! I'm your AI assistant. How can I help you today?",
+        "Hi there! I'm here to help with your questions. What would you like to know?",
+        "Welcome! I'm ready to assist you. How can I help?",
+        "Hello! I'm your virtual assistant. What can I help you with today?"
+    ]
+    
+    welcome_message = random.choice(welcome_messages)
+    
+    return jsonify({"message": welcome_message})
+
 @app.route("/api/chat/start_session", methods=["POST"])
 def start_session():
     data = request.get_json()
     email = data.get("email")
     first_message = data.get("message", "")
 
-    user = UserModel.query.filter_by(users_email=email).first()
+    user = UserModel.query.filter(func.lower(UserModel.users_email) == func.lower(email)).first()
     if not user:
         return jsonify({"error": "User not found"}), 404
 
@@ -918,28 +993,40 @@ def start_session():
     )
 
     new_session = ChatSessionModel(
-    users_id=user.users_id,
-    session_title=first_message or "New Chat",
-    session_status=SessionStatus.open
+        users_id=user.users_id,
+        session_title="New Chat",  # We'll update this later with the first real message
+        session_status=SessionStatus.open
     )
     db.session.add(new_session)
-    db.session.flush() 
+    db.session.flush()
 
-    if first_message:
-        new_msg = ChatMessageModel(
+    # Add welcome message from bot
+    welcome_messages = [
+        "Hello! I'm your AI assistant. How can I help you today?",
+        "Hi there! I'm here to help with your questions. What would you like to know?",
+        "Welcome! I'm ready to assist you. How can I help?",
+        "Hello! I'm your virtual assistant. What can I help you with today?"
+    ]
+    
+    welcome_message = random.choice(welcome_messages)
+    
+    bot_msg = ChatMessageModel(
         session_id=new_session.sessions_id,
-        sender=SenderType.user,
-        message=first_message
+        sender=SenderType.bot,
+        message=welcome_message
     )
-    db.session.add(new_msg)
+    db.session.add(bot_msg)
 
     db.session.commit()
 
+    # Return the session with the initial welcome message
     return jsonify({
         "session_id": str(new_session.sessions_id),
         "title": new_session.session_title,
-        "created_at": new_session.session_created_at
+        "created_at": new_session.session_created_at.isoformat(),
+        "welcome_message": welcome_message  # Include the welcome message in response
     })
+
 
 @app.route("/api/chat/messages", methods=["GET"])
 def get_messages():
@@ -1007,7 +1094,7 @@ def get_chat_sessions():
     if not email:
         return jsonify({"error": "Missing email"}), 400
 
-    user = db.session.query(UserModel).filter_by(users_email=email).first()
+    user = db.session.query(UserModel).filter(func.lower(UserModel.users_email) == func.lower(email)).first()
     if not user:
         return jsonify({"error": "User not found"}), 404
 
@@ -1053,7 +1140,6 @@ def rename_session():
         "new_title": new_title
     })
 
-
 @app.route("/api/chat/delete_session", methods=["DELETE"])
 def delete_session():
     data = request.get_json()
@@ -1070,7 +1156,5 @@ def delete_session():
     db.session.commit()
     return jsonify({"message": "Session deleted successfully"})
 
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
