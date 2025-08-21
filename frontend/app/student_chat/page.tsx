@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef} from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { 
+  X,
   Brain, 
   BookOpen, 
   Search, 
@@ -59,6 +60,10 @@ export default function StudentChatPage() {
   const [isStartingNewChat, setIsStartingNewChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [showRenamePrompt, setShowRenamePrompt] = useState(false);
+  const [renameSessionId, setRenameSessionId] = useState<string | null>(null);
+  const [newTitleInput, setNewTitleInput] = useState('');
+
 
   const toggleMenu = (sessionId: string) => {
     setOpenMenuId(prev => (prev === sessionId ? null : sessionId));
@@ -140,32 +145,52 @@ export default function StudentChatPage() {
     }
   };
 
-  const handleRename = async (sessionId: string) => {
-    const newTitle = prompt("Enter new chat title:");
-    if (!newTitle) return;
-    await fetch(`${api}/api/chat/rename_session`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId, title: newTitle }),
-    });
-    const updated = await fetch(`${api}/api/chat/sessions?email=${userEmail}`).then(res => res.json());
-    setSessions(updated);
+  const handleRename = async (sessionId: string, newTitle: string) => {
+  if (!newTitle.trim()) return;
+  
+  await fetch(`${api}/api/chat/rename_session`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ session_id: sessionId, title: newTitle }),
+  });
+  const updated = await fetch(`${api}/api/chat/sessions?email=${userEmail}`).then(res => res.json());
+  setSessions(updated);
+};
+const openRenamePrompt = (sessionId: string, currentTitle: string) => {
+    setRenameSessionId(sessionId);
+    setNewTitleInput(currentTitle);
+    setShowRenamePrompt(true);
+    setOpenMenuId(null);
   };
 
-  const handleDelete = async (sessionId: string) => {
-    if (!confirm("Are you sure you want to delete this chat?")) return;
-    await fetch(`${api}/api/chat/delete_session`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId }),
-    });
-    const updated = await fetch(`${api}/api/chat/sessions?email=${userEmail}`).then(res => res.json());
-    setSessions(updated);
-    if (selectedSession === sessionId) {
-      setSelectedSession(null);
-      setMessages([]);
+  const confirmRename = () => {
+    if (renameSessionId && newTitleInput.trim()) {
+      handleRename(renameSessionId, newTitleInput);
     }
+    setShowRenamePrompt(false);
+    setRenameSessionId(null);
+    setNewTitleInput('');
   };
+
+  const cancelRename = () => {
+    setShowRenamePrompt(false);
+    setRenameSessionId(null);
+    setNewTitleInput('');
+  };
+
+const handleDelete = async (sessionId: string) => {
+  await fetch(`${api}/api/chat/delete_session`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ session_id: sessionId }),
+  });
+  const updated = await fetch(`${api}/api/chat/sessions?email=${userEmail}`).then(res => res.json());
+  setSessions(updated);
+  if (selectedSession === sessionId) {
+    setSelectedSession(null);
+    setMessages([]);
+  }
+};
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedSession) return;
@@ -214,9 +239,53 @@ export default function StudentChatPage() {
     }
   };
 
-
 return (
   <div className="flex h-screen w-screen overflow-hidden bg-gradient-to-br from-[#003087] via-blue-500 to-blue-300">
+    {/* Rename Prompt Modal - Moved to top level */}
+    {showRenamePrompt && (
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+    {/* No background overlay */}
+    <div className="bg-white rounded-xl p-6 w-96 max-w-md mx-4 shadow-2xl border border-blue-200">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-[#003087]">Rename Chat</h3>
+            <button
+              onClick={cancelRename}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <input
+            type="text"
+            value={newTitleInput}
+            onChange={(e) => setNewTitleInput(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter new chat title"
+            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') confirmRename();
+              if (e.key === 'Escape') cancelRename();
+            }}
+          />
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={cancelRename}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmRename}
+              className="px-4 py-2 bg-[#003087] text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              disabled={!newTitleInput.trim()}
+            >
+              Rename
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
     {/* Sidebar - University Interface */}
     <div className="w-1/4 min-w-[280px] bg-white/20 backdrop-blur-lg p-5 border-r border-white/30 shadow-xl shadow-blue-200/30 overflow-y-auto">
       <div className="relative mb-6">
@@ -260,17 +329,17 @@ return (
               </button>
 
               {openMenuId === session.session_id && (
-                <div className="absolute right-0 mt-2 w-32 bg-white/95 backdrop-blur-lg shadow-xl rounded-xl border border-blue-200 z-10">
+                <div className="absolute right-0 mt-2 w-40 bg-white/95 backdrop-blur-lg shadow-xl rounded-xl border border-blue-200 z-10">
+                  {/* Rename button */}
                   <button
-                    onClick={() => {
-                      handleRename(session.session_id);
-                      setOpenMenuId(null);
-                    }}
+                    onClick={() => openRenamePrompt(session.session_id, session.title)}
                     className="w-full text-left px-4 py-3 text-[#003087] hover:bg-blue-50 transition-all duration-300 border-b border-blue-100 first:rounded-t-xl flex items-center gap-2"
                   >
                     <Edit3 size={14} />
-                    Rename
+                    Rename Chat
                   </button>
+                  
+                  {/* Delete button */}
                   <button
                     onClick={() => {
                       handleDelete(session.session_id);
@@ -279,7 +348,7 @@ return (
                     className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 transition-all duration-300 last:rounded-b-xl flex items-center gap-2"
                   >
                     <Trash2 size={14} />
-                    Delete
+                    Delete Chat
                   </button>
                 </div>
               )}
@@ -305,7 +374,7 @@ return (
       {/* Messages Area */}
       <div className="flex-1 p-6 overflow-y-auto bg-gradient-to-b from-white/20 to-blue-100/20 space-y-4 relative">
         {/* Subtle background pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDMwODciIGZpbGwtb3BhY2l0eT0iMC4wMiI+PHBhdGggZD0iTTIwIDIwdjBoNHY0aDR2NGgtNHY0aC00di00aC00di00aDR2LTRoNHY0eiIvPjwvZz48L2c+PC9zdmc+')]"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxn IGZpbGw9IiMwMDMwODciIGZpbGwtb3BhY2l0eT0iMC4wMiI+PHBhdGggZD0iTTIwIDIwdjBoNHY0aDR2NGgtNHY0aC00di00aC00di00aDR2LTRoNHY0eiIvPjwvZz48L2c+PC9zdmc+')]"></div>
         
         {isLoading ? (
           <div className="text-center text-[#003087]">
@@ -322,7 +391,6 @@ return (
               <div className="w-32 h-32 mx-auto bg-gradient-to-r from-blue-200/20 to-purple-300/20 rounded-full border-2 border-blue-500/50 animate-float" 
                    style={{ animation: 'float 3s ease-in-out infinite' }}>
                 <div className="w-full h-full rounded-full flex items-center justify-center">
-                  {/* Awesome AI Icon with gradient */}
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur-md opacity-50"></div>
                     <CircuitBoard size={48} className="relative text-white drop-shadow-lg" />
@@ -336,7 +404,7 @@ return (
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 border border-purple-500/20 rounded-full animate-ping-slower"></div>
               </div>
 
-              {/* Floating particles around the bubble */}
+              {/* Floating particles */}
               <div className="absolute top-4 left-1/4 w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
               <div className="absolute top-8 right-1/4 w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-1000"></div>
               <div className="absolute bottom-4 left-1/3 w-2 h-2 bg-cyan-400 rounded-full animate-bounce delay-500"></div>
@@ -358,9 +426,10 @@ return (
             {/* Academic Assistance Options */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {/* Academic Support */}
-              <div 
-                className="bg-white/80 border border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 hover:scale-105 transition-all duration-300 cursor-pointer group shadow-md hover:shadow-lg"
+              <button
                 onClick={startNewChat}
+                className="bg-white/80 border border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 hover:scale-105 transition-all duration-300 cursor-pointer group shadow-md hover:shadow-lg"
+                disabled={isStartingNewChat}
               >
                 <div className="flex justify-center mb-3">
                   <div className="p-3 bg-blue-100 rounded-full group-hover:animate-bounce">
@@ -369,12 +438,13 @@ return (
                 </div>
                 <div className="text-[#003087] font-semibold mb-2">Academic Support</div>
                 <div className="text-blue-600 text-sm">Course materials, assignments, and study help</div>
-              </div>
+              </button>
 
               {/* Research Assistant */}
-              <div 
-                className="bg-white/80 border border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 hover:scale-105 transition-all duration-300 cursor-pointer group shadow-md hover:shadow-lg"
+              <button
                 onClick={startNewChat}
+                className="bg-white/80 border border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 hover:scale-105 transition-all duration-300 cursor-pointer group shadow-md hover:shadow-lg"
+                disabled={isStartingNewChat}
               >
                 <div className="flex justify-center mb-3">
                   <div className="p-3 bg-blue-100 rounded-full group-hover:animate-pulse">
@@ -383,12 +453,13 @@ return (
                 </div>
                 <div className="text-[#003087] font-semibold mb-2">Research Helper</div>
                 <div className="text-blue-600 text-sm">Research guidance and resource finding</div>
-              </div>
+              </button>
 
               {/* University Services */}
-              <div 
-                className="bg-white/80 border border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 hover:scale-105 transition-all duration-300 cursor-pointer group shadow-md hover:shadow-lg"
+              <button
                 onClick={startNewChat}
+                className="bg-white/80 border border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 hover:scale-105 transition-all duration-300 cursor-pointer group shadow-md hover:shadow-lg"
+                disabled={isStartingNewChat}
               >
                 <div className="flex justify-center mb-3">
                   <div className="p-3 bg-blue-100 rounded-full group-hover:animate-spin">
@@ -397,11 +468,11 @@ return (
                 </div>
                 <div className="text-[#003087] font-semibold mb-2">Campus Services</div>
                 <div className="text-blue-600 text-sm">University information and support services</div>
-              </div>
+              </button>
             </div>
 
             {/* Welcome Message */}
-            <div className="text-center">
+            <div className="text-center relative z-10">
               <div className="text-[#003087] text-lg mb-6 px-8 leading-relaxed bg-white/80 rounded-xl p-6 border border-blue-200 shadow-md">
                 <div className="flex items-center justify-center gap-2 mb-3">
                   <Stars size={20} className="text-blue-600" />
@@ -410,7 +481,7 @@ return (
               </div>
               <button
                 onClick={startNewChat}
-                className="bg-gradient-to-r from-[#003087] to-blue-600 text-white px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold flex items-center justify-center gap-2 mx-auto"
+                className="bg-gradient-to-r from-[#003087] to-blue-600 text-white px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold flex items-center justify-center gap-2 mx-auto relative z-20"
                 disabled={isStartingNewChat}
               >
                 <Zap size={20} />
@@ -425,55 +496,56 @@ return (
           </div>
         ) : (
           <AnimatePresence initial={false}>
-  {messages.map((msg, i) => (
-    <motion.div
-      key={i}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-      className={`max-w-2xl break-words flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} ${
-        msg.sender !== 'user' ? 'ml-10' : ''
+            {messages.map((msg, i) => (
+              <motion.div
+  key={i}
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -20 }}
+  transition={{ duration: 0.3 }}
+  className={`max-w-2xl break-words flex ${msg.sender === 'user' ? 'justify-end mr-32' : 'justify-start'}`}
+>
+  <div className={`flex items-start gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+    {/* Avatar */}
+    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+      msg.sender === 'user' 
+        ? 'bg-blue-100 border-2 border-blue-300' 
+        : 'bg-gradient-to-r from-blue-100 to-blue-200 border-2 border-blue-200'
+    }`}>
+      {msg.sender === 'user' ? (
+        <User size={20} className="text-blue-700" />
+      ) : (
+        <Atom size={20} className="text-blue-700" />
+      )}
+    </div>
+    
+    {/* Message Bubble */}
+    <div
+      className={`px-5 py-3 rounded-2xl max-w-md ${
+        msg.sender === 'user'
+          ? 'bg-blue-100 border border-blue-200 text-[#003087]'
+          : 'bg-white border border-blue-100 text-[#003087] shadow-sm'
       }`}
     >
-      <div className={`flex items-start gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-          msg.sender === 'user' 
-            ? 'bg-blue-100 border-2 border-blue-300' 
-            : 'bg-gradient-to-r from-blue-100 to-blue-200 border-2 border-blue-200'
-        }`}>
-          {msg.sender === 'user' ? (
-            <User size={20} className="text-blue-700" />
-          ) : (
-            <Atom size={20} className="text-blue-700" />
-          )}
-        </div>
-        <div
-          className={`px-5 py-3 rounded-2xl max-w-md ${
-            msg.sender === 'user'
-              ? 'bg-blue-100 border border-blue-200 text-[#003087]'
-              : 'bg-white border border-blue-100 text-[#003087] shadow-sm'
-          }`}
-        >
-          <div className="text-xs text-blue-600 mb-1 font-medium flex items-center gap-1">
-            {msg.sender === 'user' ? (
-              <>
-                <User size={12} />
-                <span>You</span>
-              </>
-            ) : (
-              <>
-                <Cpu size={12} />
-                <span>Campus Assistant</span>
-              </>
-            )}
-          </div>
-          {msg.text}
-        </div>
+      <div className="text-xs text-blue-600 mb-1 font-medium flex items-center gap-1">
+        {msg.sender === 'user' ? (
+          <>
+            <User size={12} />
+            <span>You</span>
+          </>
+        ) : (
+          <>
+            <Cpu size={12} />
+            <span>Campus Assistant</span>
+          </>
+        )}
       </div>
-    </motion.div>
-  ))}
-</AnimatePresence>
+      {msg.text}
+    </div>
+  </div>
+</motion.div>
+            ))}
+          </AnimatePresence>
         )}
         <div ref={messagesEndRef} />
       </div>

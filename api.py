@@ -6,7 +6,9 @@ from flask_cors import CORS
 from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
 from sqlalchemy.orm import joinedload
-from sqlalchemy import func
+from sqlalchemy import func 
+from sqlalchemy import text
+import google.generativeai as genai
 import os
 import uuid
 import base64
@@ -137,54 +139,54 @@ def dashboard_stats():
     except Exception as e:
         print(f"ERROR in dashboard_stats: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 @app.route("/api/student/dashboard_stats", methods=["GET"])
 def student_dashboard_stats():
     try:
-        data = request.args  # استقبل user_id من الكويري
-        user_id = data.get("user_id")
+        # جلب email الطالب من query parameters
+        student_email = request.args.get('student_email')
+        
+        if not student_email:
+            return jsonify({"error": "Student email is required"}), 400
 
-        if not user_id:
-            return jsonify({"error": "user_id is required"}), 400
+        # البحث عن ID الطالب باستخدام email
+        student_id_result = db.session.execute(
+            text("SELECT users_id FROM users WHERE users_email = :email AND users_role = 'student'"),
+            {"email": student_email}
+        ).fetchone()
 
-        # SELECT COUNT(*) للـ Complaints
+        if not student_id_result:
+            return jsonify({"error": "Student not found"}), 404
+
+        student_id = student_id_result[0]
+
+        # حساب عدد شكاوى الطالب
         complaints_count = db.session.execute(
-            text("SELECT COUNT(*) FROM complaints WHERE user_id = :uid"),
-            {"uid": user_id}
+            text("SELECT COUNT(*) FROM complaints WHERE sender_id = :student_id"),
+            {"student_id": student_id}
         ).scalar()
 
-        # SELECT COUNT(*) للـ Suggestions
+        # حساب عدد اقتراحات الطالب
         suggestions_count = db.session.execute(
-            text("SELECT COUNT(*) FROM suggestions WHERE user_id = :uid"),
-            {"uid": user_id}
+            text("SELECT COUNT(*) FROM suggestions WHERE users_id = :student_id"),
+            {"student_id": student_id}
         ).scalar()
 
-        # SELECT COUNT(*) للـ Notifications (unread)
+        # حساب عدد الإشعارات غير المقروءة للطالب
         unread_notifications_count = db.session.execute(
-            text("SELECT COUNT(*) FROM notifications WHERE user_id = :uid AND notification_is_read = false"),
-            {"uid": user_id}
+            text("SELECT COUNT(*) FROM notifications WHERE user_id = :student_id AND notification_is_read = false"),
+            {"student_id": student_id}
         ).scalar()
 
         return jsonify({
             "complaints": complaints_count,
             "suggestions": suggestions_count,
-            "unreadNotifications": unread_notifications_count
+            "unread_notifications": unread_notifications_count  # تم التصحيح هنا
         }), 200
 
     except Exception as e:
         print(f"ERROR in student_dashboard_stats: {str(e)}")
         return jsonify({"error": str(e)}), 500
-@app.route('/api/student/<email>', methods=['GET'])
-def get_student_by_email(email):
-    student = UserModel.query.filter(
-    func.lower(UserModel.users_email) == func.lower(email)
-    ).first()
-    if student:
-        return jsonify({
-            'name': student.users_name,
-            'email': student.users_email.lower()
-        })
-    else:
-        return jsonify({'message': 'Student not found'}), 404
 
 @app.route("/api/student/showcomplaints", methods=["GET"])
 def get_complaints():
@@ -900,6 +902,8 @@ def uploaded_complaint_file(filename):
 def uploaded_suggestion_file(filename):
     return send_from_directory(app.config['SUGGESTION_UPLOAD_FOLDER'], filename)
 
+
+
 @app.route("/api/chat/ask", methods=["POST"])
 def ask():
     data = request.get_json()
@@ -1155,6 +1159,7 @@ def delete_session():
     db.session.delete(session)
     db.session.commit()
     return jsonify({"message": "Session deleted successfully"})
+
 
 if __name__ == '__main__':
     app.run(debug=False)

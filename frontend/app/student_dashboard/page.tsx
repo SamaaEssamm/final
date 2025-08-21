@@ -8,14 +8,17 @@ export default function Dashboard() {
   const [studentName, setStudentName] = useState('Student');
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
-    complaints: 0,
-    suggestions: 0,
-    unread_notifications: 0
-  });
+  complaints: 0,
+  suggestions: 0,
+  unread_notifications: 0,
+  lastComplaint: null as { title: string; date: string } | null,
+  lastSuggestion: null as { title: string; date: string } | null
+});
   const router = useRouter();
   const redirected = useRef(false); 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
 
   type Notification = {
     id: string;
@@ -25,6 +28,12 @@ export default function Dashboard() {
     complaint_id?: string;
     suggestion_id?: string;
   };
+  
+  useEffect(() => {
+    console.log('Current stats:', stats);
+    console.log('Current notifications:', notifications);
+    console.log('Unread notifications count:', stats.unread_notifications);
+  }, [stats, notifications]);
 
   useEffect(() => {
     const email = localStorage.getItem('student_email');
@@ -38,124 +47,80 @@ export default function Dashboard() {
         return; 
       }
      
-      // جلب اسم الطالب
       fetch(`${api}/api/student/${encodeURIComponent(email)}`)
-        .then(res => {
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-          return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
           if (data.name) {
             setStudentName(data.name);
           } else {
             setStudentName('Student');
           }
-          setIsLoading(false);
         })
-        .catch((error) => {
-          console.error("Error fetching student name:", error);
+        .catch(() => {
           setStudentName('Student');
-          setIsLoading(false);
         });
 
-      // جلب إحصائيات الطالب
-      fetchStudentStats(email);
-      
-      // جلب الإشعارات
-      fetch(`${api}/api/student/notifications?student_email=${encodeURIComponent(email)}`)
-        .then(res => {
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-          return res.json();
-        })
-        .then(data => {
-          setNotifications(data);
-        })
-        .catch(error => {
-          console.error("Failed to fetch student notifications:", error);
-        });
+      fetchDashboardData(email);
     }
   }, [router]);
 
-  const fetchStudentStats = async (email: string) => {
+  const fetchDashboardData = async (email: string) => {
+    setIsLoadingNotifications(true);
     try {
-      console.log('Fetching student stats for email:', email);
-      
-      // المحاولة الأولى: استخدام endpoint الرئيسي
-      const response = await fetch(`${api}/api/student/stats?student_email=${encodeURIComponent(email)}`);
-      
-      console.log('Response status:', response.status);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Stats data received:', data);
-        
+      const [statsResponse, notificationsResponse] = await Promise.all([
+        fetch(`${api}/api/student/dashboard_stats?student_email=${encodeURIComponent(email)}`),
+        fetch(`${api}/api/student/notifications?student_email=${encodeURIComponent(email)}`)
+      ]);
+
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
         setStats({
-          complaints: data.complaints || 0,
-          suggestions: data.suggestions || 0,
-          unread_notifications: data.unread_notifications || 0
-        });
+  complaints: statsData.complaints || 0,
+  suggestions: statsData.suggestions || 0,
+  unread_notifications: statsData.unread_notifications || statsData.unreadNotifications || 0,
+  lastComplaint: statsData.last_complaint || null,
+  lastSuggestion: statsData.last_suggestion || null
+});
+
+
       } else {
-        console.error('Failed to fetch student stats, status:', response.status);
-        // المحاولة الثانية: استخدام endpoints منفصلة
-        await fetchStatsSeparately(email);
+        console.error('Failed to fetch student stats');
+        tryAlternativeEndpoint(email);
+      }
+
+      if (notificationsResponse.ok) {
+        const notificationsData = await notificationsResponse.json();
+        setNotifications(notificationsData);
+      } else {
+        console.error('Failed to fetch notifications');
+        setNotifications([]);
       }
     } catch (error) {
-      console.error("Error fetching student stats:", error);
-      // المحاولة الثانية في حالة الخطأ
-      await fetchStatsSeparately(email);
+      console.error("Error fetching dashboard data:", error);
+      tryAlternativeEndpoint(email);
+      setNotifications([]);
+    } finally {
+      setIsLoading(false);
+      setIsLoadingNotifications(false);
     }
   };
 
-  // دالة لجلب الإحصائيات بشكل منفصل
-  const fetchStatsSeparately = async (email: string) => {
+  const tryAlternativeEndpoint = async (email: string) => {
     try {
-      console.log('Trying to fetch stats separately...');
+      const response = await fetch(`${api}/api/student/stats?student_email=${encodeURIComponent(email)}`);
       
-      const [complaintsRes, suggestionsRes, notificationsRes] = await Promise.all([
-        fetch(`${api}/api/student/complaints/count?student_email=${encodeURIComponent(email)}`),
-        fetch(`${api}/api/student/suggestions/count?student_email=${encodeURIComponent(email)}`),
-        fetch(`${api}/api/student/notifications/unread/count?student_email=${encodeURIComponent(email)}`)
-      ]);
-
-      let complaints = 0;
-      let suggestions = 0;
-      let unread_notifications = 0;
-
-      if (complaintsRes.ok) {
-        const data = await complaintsRes.json();
-        complaints = data.count || 0;
+      if (response.ok) {
+        const data = await response.json();
+        setStats({
+  complaints: data.complaints || 0,
+  suggestions: data.suggestions || 0,
+  unread_notifications: data.unread_notifications || 0,
+  lastComplaint: data.last_complaint || null,
+  lastSuggestion: data.last_suggestion || null
+});
       }
-
-      if (suggestionsRes.ok) {
-        const data = await suggestionsRes.json();
-        suggestions = data.count || 0;
-      }
-
-      if (notificationsRes.ok) {
-        const data = await notificationsRes.json();
-        unread_notifications = data.count || 0;
-      }
-
-      setStats({
-        complaints,
-        suggestions,
-        unread_notifications
-      });
-
-      console.log('Separate stats fetched:', { complaints, suggestions, unread_notifications });
-
     } catch (error) {
-      console.error("Error fetching separate stats:", error);
-      // إذا فشلت جميع المحاولات، استخدم القيم الافتراضية
-      setStats({
-        complaints: 0,
-        suggestions: 0,
-        unread_notifications: 0
-      });
+      console.error("Error fetching from alternative endpoint:", error);
     }
   };
 
@@ -168,14 +133,12 @@ export default function Dashboard() {
           body: JSON.stringify({ notification_id: notification.id })
         });
         
-        // تحديث حالة الإشعار محلياً
         setNotifications(prev =>
           prev.map(n =>
             n.id === notification.id ? { ...n, is_read: true } : n
           )
         );
         
-        // تحديث عدد الإشعارات غير المقروءة
         setStats(prev => ({ 
           ...prev, 
           unread_notifications: Math.max(0, prev.unread_notifications - 1) 
@@ -213,7 +176,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex flex-col">
-      {/* Header */}
       <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 px-6 shadow-lg">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
@@ -228,7 +190,6 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* Notifications */}
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
@@ -251,11 +212,16 @@ export default function Dashboard() {
                       {stats.unread_notifications} unread
                     </span>
                   </div>
-                  <div className="divide-y divide-gray-100">
-                    {notifications.length === 0 ? (
-                      <p className="p-4 text-sm text-gray-500 text-center">No notifications</p>
-                    ) : (
-                      notifications.map((notification, index) => (
+                  {isLoadingNotifications ? (
+                    <div className="p-4 text-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+                      <p className="text-sm text-gray-500 mt-2">Loading notifications...</p>
+                    </div>
+                  ) : notifications.length === 0 ? (
+                    <p className="p-4 text-sm text-gray-500 text-center">No notifications</p>
+                  ) : (
+                    <div className="divide-y divide-gray-100">
+                      {notifications.map((notification, index) => (
                         <div
                           key={index}
                           onClick={() => handleNotificationClick(notification)}
@@ -279,14 +245,13 @@ export default function Dashboard() {
                             </div>
                           </div>
                         </div>
-                      ))
-                    )}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Student Info & Logout */}
             <div className="flex items-center space-x-3">
               <div className="text-right">
                 <p className="text-sm font-medium">Welcome, {studentName}</p>
@@ -307,10 +272,8 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-grow p-6">
         <div className="max-w-6xl mx-auto">
-          {/* Welcome Section */}
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl p-8 text-white mb-8 shadow-xl transform transition-all duration-300 hover:shadow-2xl">
             <div className="flex items-center justify-between">
               <div>
@@ -324,27 +287,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* إضافة رسالة تحذير إذا فشل تحميل الإحصائيات */}
-          {stats.complaints === 0 && stats.suggestions === 0 && stats.unread_notifications === 0 && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-yellow-800">Attention needed</h3>
-                  <p className="text-sm text-yellow-700 mt-1">
-                    Unable to load statistics. This might be your first time using the system.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-blue-500 transform transition-all duration-300 hover:scale-105">
               <div className="flex items-center justify-between">
                 <div>
@@ -369,22 +312,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-red-500 transform transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Unread Notifications</p>
-                  <p className="text-4xl font-bold text-red-900 mt-2">{stats.unread_notifications}</p>
-                </div>
-                <div className="p-4 bg-red-100 rounded-full">
-                  <FaBell className="text-red-600 text-3xl" />
-                </div>
-              </div>
-            </div>
+            
           </div>
 
-          {/* Action Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {/* Complaint Card */}
             <div 
               onClick={() => router.push('/student_complaint')}
               className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-6 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer group"
@@ -401,7 +332,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Suggestion Card */}
             <div 
               onClick={() => router.push('/student_suggestions')}
               className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl p-6 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer group"
@@ -418,7 +348,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Chat Assistant Card */}
             <div 
               onClick={() => router.push('/student_chat')}
               className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-6 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer group"
@@ -436,34 +365,12 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Recent Activity Section */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-              <FaGraduationCap className="mr-3 text-blue-600" />
-              Your Activity Summary
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-blue-50 rounded-xl p-4">
-                <h3 className="font-semibold text-blue-900 mb-2">Complaints History</h3>
-                <p className="text-2xl font-bold text-blue-700">{stats.complaints}</p>
-                <p className="text-sm text-gray-600 mt-1">Total complaints submitted</p>
-              </div>
-              <div className="bg-purple-50 rounded-xl p-4">
-                <h3 className="font-semibold text-purple-900 mb-2">Suggestions History</h3>
-                <p className="text-2xl font-bold text-purple-700">{stats.suggestions}</p>
-                <p className="text-sm text-gray-600 mt-1">Total suggestions submitted</p>
-              </div>
-              <div className="bg-red-50 rounded-xl p-4">
-                <h3 className="font-semibold text-red-900 mb-2">Pending Notifications</h3>
-                <p className="text-2xl font-bold text-red-700">{stats.unread_notifications}</p>
-                <p className="text-sm text-gray-600 mt-1">Unread notifications</p>
-              </div>
-            </div>
-          </div>
+         <div className="bg-white rounded-2xl p-6 shadow-lg mb-8">
+ 
+</div>
         </div>
       </main>
 
-      {/* Floating Chatbot Button */}
       <button
         onClick={() => router.push('/student_chat')}
         className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center w-16 h-16 group"
@@ -475,7 +382,6 @@ export default function Dashboard() {
         </span>
       </button>
 
-      {/* Footer */}
       <footer className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="text-center md:text-left mb-4 md:mb-0">

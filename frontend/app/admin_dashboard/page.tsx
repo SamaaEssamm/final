@@ -16,7 +16,7 @@ export default function AdminDashboard() {
   const redirected = useRef(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
-
+  const api = process.env.NEXT_PUBLIC_API_URL;
   type Notification = {
     id: string;
     message: string;
@@ -34,7 +34,7 @@ export default function AdminDashboard() {
         router.replace('/login');
       }
     } else {
-      fetch(`http://localhost:5000/api/get_admin_name/${encodeURIComponent(email)}`)
+      fetch(`${api}/api/get_admin_name/${encodeURIComponent(email)}`)
         .then(res => res.json())
         .then(data => {
           if (data.name) {
@@ -54,7 +54,7 @@ export default function AdminDashboard() {
   // دالة منفصلة لجلب الإحصائيات
   const fetchDashboardStats = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/dashboard_stats');
+      const response = await fetch(`${api}/api/admin/dashboard_stats`);
       const data = await response.json();
       
       if (response.ok) {
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
     const email = localStorage.getItem('admin_email');
     if (!email) return;
 
-    fetch(`http://localhost:5000/api/admin/notifications?admin_email=${encodeURIComponent(email)}`)
+    fetch(`${api}/api/admin/notifications?admin_email=${encodeURIComponent(email)}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.is_read) {
       try {
-        await fetch('http://localhost:5000/api/admin/mark_notification_read', {
+        await fetch(`${api}/api/admin/mark_notification_read`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ notification_id: notification.id })
