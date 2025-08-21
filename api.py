@@ -19,7 +19,7 @@ from email_utils import send_notification_email
 from dotenv import load_dotenv
 import re
 import random
-
+print("PORT from environment:", os.environ.get("PORT"))
 load_dotenv()
 
 def allowed_file(filename):
