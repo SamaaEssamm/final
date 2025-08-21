@@ -1,126 +1,172 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaSignOutAlt, FaBell, FaExclamationCircle, FaLightbulb, FaComments, FaGraduationCap, FaUserCircle, FaRocket, FaBullhorn } from 'react-icons/fa';
+import { FaSignOutAlt, FaBell, FaExclamationCircle, FaLightbulb, FaComments, FaUserCircle, FaRocket, FaBullhorn } from 'react-icons/fa';
+
+// تعريف نوع الإشعار
+type Notification = {
+  id: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+  complaint_id?: string;
+  suggestion_id?: string;
+};
 
 export default function Dashboard() {
   const api = process.env.NEXT_PUBLIC_API_URL;
   const [studentName, setStudentName] = useState('Student');
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
-  complaints: 0,
-  suggestions: 0,
-  unread_notifications: 0,
-  lastComplaint: null as { title: string; date: string } | null,
-  lastSuggestion: null as { title: string; date: string } | null
-});
+    complaints: 0,
+    suggestions: 0,
+    unread_notifications: 0
+  });
   const router = useRouter();
-  const redirected = useRef(false); 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
 
-  type Notification = {
-    id: string;
-    message: string;
-    is_read: boolean;
-    created_at: string;
-    complaint_id?: string;
-    suggestion_id?: string;
+  // دالة لتصحيح الأخطاء
+  const debugLog = (message: string, data?: any) => {
+    console.log(`[DEBUG] ${message}`, data || '');
   };
-  
-  useEffect(() => {
-    console.log('Current stats:', stats);
-    console.log('Current notifications:', notifications);
-    console.log('Unread notifications count:', stats.unread_notifications);
-  }, [stats, notifications]);
 
   useEffect(() => {
     const email = localStorage.getItem('student_email');
+    debugLog('Email from localStorage:', email);
     
     if (!email) {
+      debugLog('No email found, redirecting to login');
       router.push('/login');
-    } else {
-      const role = localStorage.getItem("role");
-      if (role !== "student") {
-        router.push("/no-access");
-        return; 
-      }
-     
-      fetch(`${api}/api/student/${encodeURIComponent(email)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.name) {
-            setStudentName(data.name);
-          } else {
-            setStudentName('Student');
-          }
-        })
-        .catch(() => {
-          setStudentName('Student');
-        });
-
-      fetchDashboardData(email);
+      return;
     }
-  }, [router]);
 
-  const fetchDashboardData = async (email: string) => {
-    setIsLoadingNotifications(true);
-    try {
-      const [statsResponse, notificationsResponse] = await Promise.all([
-        fetch(`${api}/api/student/dashboard_stats?student_email=${encodeURIComponent(email)}`),
-        fetch(`${api}/api/student/notifications?student_email=${encodeURIComponent(email)}`)
-      ]);
+    const role = localStorage.getItem("role");
+    debugLog('User role:', role);
+    
+    if (role !== "student") {
+      debugLog('Invalid role, redirecting to no-access');
+      router.push("/no-access");
+      return;
+    }
 
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        setStats({
-  complaints: statsData.complaints || 0,
-  suggestions: statsData.suggestions || 0,
-  unread_notifications: statsData.unread_notifications || statsData.unreadNotifications || 0,
-  lastComplaint: statsData.last_complaint || null,
-  lastSuggestion: statsData.last_suggestion || null
-});
-
-
-      } else {
-        console.error('Failed to fetch student stats');
-        tryAlternativeEndpoint(email);
+    // جلب بيانات الطالب
+    const fetchStudentData = async () => {
+      try {
+        debugLog('Fetching student data from:', `${api}/api/student/${encodeURIComponent(email)}`);
+        const response = await fetch(`${api}/api/student/${encodeURIComponent(email)}`);
+        
+        debugLog('Student API response status:', response.status);
+        
+        if (response.ok) {
+          const data = await response.json();
+          debugLog('Student API response data:', data);
+          
+          // البحث عن اسم الطالب في هياكل مختلفة محتملة
+          const name = data.name || data.full_name || data.student_name || 
+                       data.usersname || data.email?.split('.')[0] || 'Student';
+          
+          debugLog('Extracted student name:', name);
+          setStudentName(name);
+        } else {
+          debugLog('Failed to fetch student data, status:', response.status);
+          setStudentName(email.split('.')[0]); // استخدام جزء من الإيميل كاسم
+        }
+      } catch (error) {
+        debugLog('Error fetching student data:', error);
+        setStudentName('Student');
       }
+    };
 
-      if (notificationsResponse.ok) {
-        const notificationsData = await notificationsResponse.json();
-        setNotifications(notificationsData);
-      } else {
-        console.error('Failed to fetch notifications');
+    // جلب إحصائيات لوحة التحكم
+    const fetchDashboardStats = async () => {
+      try {
+        debugLog('Fetching dashboard stats from:', `${api}/api/student/dashboard_stats?student_email=${encodeURIComponent(email)}`);
+        const response = await fetch(`${api}/api/student/dashboard_stats?student_email=${encodeURIComponent(email)}`);
+        
+        debugLog('Dashboard stats API response status:', response.status);
+        
+        if (response.ok) {
+          const data = await response.json();
+          debugLog('Dashboard stats data:', data);
+          
+          setStats({
+            complaints: data.complaints || data.total_complaints || 0,
+            suggestions: data.suggestions || data.total_suggestions || 0,
+            unread_notifications: data.unread_notifications || data.unreadNotifications || 0
+          });
+        } else {
+          debugLog('Failed to fetch dashboard stats, trying alternative endpoint');
+          tryAlternativeEndpoint(email);
+        }
+      } catch (error) {
+        debugLog('Error fetching dashboard stats:', error);
+        setStats({ complaints: 0, suggestions: 0, unread_notifications: 0 });
+      }
+    };
+
+    // جلب الإشعارات
+    const fetchNotifications = async () => {
+      setIsLoadingNotifications(true);
+      try {
+        debugLog('Fetching notifications from:', `${api}/api/student/notifications?student_email=${encodeURIComponent(email)}`);
+        const response = await fetch(`${api}/api/student/notifications?student_email=${encodeURIComponent(email)}`);
+        
+        debugLog('Notifications API response status:', response.status);
+        
+        if (response.ok) {
+          const data = await response.json();
+          debugLog('Notifications data:', data);
+          setNotifications(data);
+        } else {
+          debugLog('Failed to fetch notifications');
+          setNotifications([]);
+        }
+      } catch (error) {
+        debugLog('Error fetching notifications:', error);
         setNotifications([]);
+      } finally {
+        setIsLoadingNotifications(false);
       }
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-      tryAlternativeEndpoint(email);
-      setNotifications([]);
-    } finally {
-      setIsLoading(false);
-      setIsLoadingNotifications(false);
-    }
-  };
+    };
+
+    // تنفيذ جميع طلبات البيانات
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([
+          fetchStudentData(),
+          fetchDashboardStats(),
+          fetchNotifications()
+        ]);
+      } catch (error) {
+        debugLog('Error in fetchAllData:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, [router, api]);
 
   const tryAlternativeEndpoint = async (email: string) => {
     try {
+      debugLog('Trying alternative endpoint:', `${api}/api/student/stats?student_email=${encodeURIComponent(email)}`);
       const response = await fetch(`${api}/api/student/stats?student_email=${encodeURIComponent(email)}`);
       
       if (response.ok) {
         const data = await response.json();
+        debugLog('Alternative endpoint data:', data);
+        
         setStats({
-  complaints: data.complaints || 0,
-  suggestions: data.suggestions || 0,
-  unread_notifications: data.unread_notifications || 0,
-  lastComplaint: data.last_complaint || null,
-  lastSuggestion: data.last_suggestion || null
-});
+          complaints: data.complaints || data.total_complaints || 0,
+          suggestions: data.suggestions || data.total_suggestions || 0,
+          unread_notifications: data.unread_notifications || data.unreadNotifications || 0
+        });
       }
     } catch (error) {
-      console.error("Error fetching from alternative endpoint:", error);
+      debugLog('Error fetching from alternative endpoint:', error);
     }
   };
 
@@ -144,7 +190,7 @@ export default function Dashboard() {
           unread_notifications: Math.max(0, prev.unread_notifications - 1) 
         }));
       } catch (error) {
-        console.error("Failed to mark notification as read:", error);
+        debugLog("Failed to mark notification as read:", error);
       }
     }
 
@@ -272,7 +318,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="flex-grow p-6">
+<main className="flex-grow p-6">
         <div className="max-w-6xl mx-auto">
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl p-8 text-white mb-8 shadow-xl transform transition-all duration-300 hover:shadow-2xl">
             <div className="flex items-center justify-between">
@@ -365,22 +411,11 @@ export default function Dashboard() {
             </div>
           </div>
 
-         <div className="bg-white rounded-2xl p-6 shadow-lg mb-8">
- 
-</div>
+         
         </div>
       </main>
 
-      <button
-        onClick={() => router.push('/student_chat')}
-        className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center w-16 h-16 group"
-        title="Chat with Assistant"
-      >
-        <FaComments className="text-2xl" />
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full group-hover:scale-110 transition-transform">
-          AI
-        </span>
-      </button>
+     
 
       <footer className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
@@ -408,3 +443,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
