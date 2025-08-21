@@ -44,11 +44,10 @@ export default function HomePage() {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-900/70 via-blue-800/60 to-indigo-900/70">
-      {/* Main background with increased transparency */}
-      <div className="absolute inset-0 z-0 opacity-30">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Main background without blue overlay - only the image */}
+      <div className="absolute inset-0 z-0">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('/1719835311862.jpeg')] bg-cover bg-center bg-no-repeat"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900/50"></div>
       </div>
       
       {/* Animated grid pattern for additional texture */}

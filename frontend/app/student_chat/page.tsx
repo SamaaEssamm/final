@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef} from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { 
+  X,
   Brain, 
   BookOpen, 
   Search, 
@@ -59,6 +60,10 @@ export default function StudentChatPage() {
   const [isStartingNewChat, setIsStartingNewChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [showRenamePrompt, setShowRenamePrompt] = useState(false);
+  const [renameSessionId, setRenameSessionId] = useState<string | null>(null);
+  const [newTitleInput, setNewTitleInput] = useState('');
+
 
   const toggleMenu = (sessionId: string) => {
     setOpenMenuId(prev => (prev === sessionId ? null : sessionId));
@@ -151,6 +156,27 @@ export default function StudentChatPage() {
   const updated = await fetch(`${api}/api/chat/sessions?email=${userEmail}`).then(res => res.json());
   setSessions(updated);
 };
+const openRenamePrompt = (sessionId: string, currentTitle: string) => {
+    setRenameSessionId(sessionId);
+    setNewTitleInput(currentTitle);
+    setShowRenamePrompt(true);
+    setOpenMenuId(null);
+  };
+
+  const confirmRename = () => {
+    if (renameSessionId && newTitleInput.trim()) {
+      handleRename(renameSessionId, newTitleInput);
+    }
+    setShowRenamePrompt(false);
+    setRenameSessionId(null);
+    setNewTitleInput('');
+  };
+
+  const cancelRename = () => {
+    setShowRenamePrompt(false);
+    setRenameSessionId(null);
+    setNewTitleInput('');
+  };
 
 const handleDelete = async (sessionId: string) => {
   await fetch(`${api}/api/chat/delete_session`, {
@@ -215,6 +241,51 @@ const handleDelete = async (sessionId: string) => {
 
 return (
   <div className="flex h-screen w-screen overflow-hidden bg-gradient-to-br from-[#003087] via-blue-500 to-blue-300">
+    {/* Rename Prompt Modal - Moved to top level */}
+    {showRenamePrompt && (
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+    {/* No background overlay */}
+    <div className="bg-white rounded-xl p-6 w-96 max-w-md mx-4 shadow-2xl border border-blue-200">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-[#003087]">Rename Chat</h3>
+            <button
+              onClick={cancelRename}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <input
+            type="text"
+            value={newTitleInput}
+            onChange={(e) => setNewTitleInput(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter new chat title"
+            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') confirmRename();
+              if (e.key === 'Escape') cancelRename();
+            }}
+          />
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={cancelRename}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmRename}
+              className="px-4 py-2 bg-[#003087] text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              disabled={!newTitleInput.trim()}
+            >
+              Rename
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
     {/* Sidebar - University Interface */}
     <div className="w-1/4 min-w-[280px] bg-white/20 backdrop-blur-lg p-5 border-r border-white/30 shadow-xl shadow-blue-200/30 overflow-y-auto">
       <div className="relative mb-6">
@@ -259,19 +330,16 @@ return (
 
               {openMenuId === session.session_id && (
                 <div className="absolute right-0 mt-2 w-40 bg-white/95 backdrop-blur-lg shadow-xl rounded-xl border border-blue-200 z-10">
+                  {/* Rename button */}
                   <button
-                    onClick={() => {
-                      const newTitle = prompt("Enter new chat title:", session.title);
-                      if (newTitle && newTitle.trim()) {
-                        handleRename(session.session_id, newTitle);
-                      }
-                      setOpenMenuId(null);
-                    }}
+                    onClick={() => openRenamePrompt(session.session_id, session.title)}
                     className="w-full text-left px-4 py-3 text-[#003087] hover:bg-blue-50 transition-all duration-300 border-b border-blue-100 first:rounded-t-xl flex items-center gap-2"
                   >
                     <Edit3 size={14} />
                     Rename Chat
                   </button>
+                  
+                  {/* Delete button */}
                   <button
                     onClick={() => {
                       handleDelete(session.session_id);
